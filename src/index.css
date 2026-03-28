@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 부드러운 스크롤 + 다크 배경 기본값 */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-surface text-zinc-100 antialiased;
+  background-color: #0a0a0a;
+}
+
+/* 포커스 링: 키보드 접근성 */
+:focus-visible {
+  @apply outline-2 outline-offset-2 outline-accent;
+}

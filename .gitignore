@@ -1,0 +1,7 @@
+node_modules
+dist
+*.local
+.DS_Store
+
+# GitHub 100MB 제한 — 로컬 시연용만 두고 저장소에는 포함하지 않음
+public/videos/lawpartner-demo.mp4
