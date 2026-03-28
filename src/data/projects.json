@@ -73,9 +73,9 @@
   },
   {
     "id": "medneduro",
-    "title": "MedNeduro",
+    "title": "MedNeuro",
     "description": "의료·신경(Medical / Neuro) 도메인을 다루는 팀 프로젝트입니다. 임상·연구 데이터 또는 사용자 서비스 흐름에 맞춘 기능을 구현했으며, 상세 스택·실행 방법은 GitHub 저장소를 참고하세요.",
-    "githubUrl": "https://github.com/HONG-SH-1/MedNeduro",
+    "githubUrl": "https://github.com/MadSadly/MedNeuro",
     "tags": [
       "Healthcare",
       "Full-stack",
@@ -95,7 +95,7 @@
         "id": "overview",
         "label": "개요",
         "images": ["projects/medneduro/overview-key-tech.png"],
-        "content": "【핵심 기술 3축 — 상단 슬라이드와 동일】\n\n■ 백엔드(Spring Boot)\nREST API 서버, 사용자 인증·보안, 안정적인 데이터 통신\n\n■ AI 처리(Python)\nNIfTI·DICOM 의료 영상 처리, 뇌 영상 분석·병변 탐지, 2D 단면·3D 모델 생성\n\n■ 3D 가시화(Three.js)\nWebGL 기반 렌더링, MRI 뇌 모델 회전·확대 등 인터랙션, 브라우저에서 실시간 시각화\n\nMedNeduro는 위 세 계층으로 업로드·분석·시각화·진단 기록까지 웹에서 이어지도록 구성했습니다."
+        "content": "【핵심 기술 3축 — 상단 슬라이드와 동일】\n\n■ 백엔드(Spring Boot)\nREST API 서버, 사용자 인증·보안, 안정적인 데이터 통신\n\n■ AI 처리(Python)\nNIfTI·DICOM 의료 영상 처리, 뇌 영상 분석·병변 탐지, 2D 단면·3D 모델 생성\n\n■ 3D 가시화(Three.js)\nWebGL 기반 렌더링, MRI 뇌 모델 회전·확대 등 인터랙션, 브라우저에서 실시간 시각화\n\nMedNeuro는 위 세 계층으로 업로드·분석·시각화·진단 기록까지 웹에서 이어지도록 구성했습니다."
       },
       {
         "id": "goals",
