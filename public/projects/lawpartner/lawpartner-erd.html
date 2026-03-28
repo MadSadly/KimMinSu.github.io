@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>Law-Partner · ERD</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#e8ecf0;font-family:'Malgun Gothic','Apple SD Gothic Neo','Noto Sans KR',sans-serif;padding:32px;min-width:1620px}
+.page-title{font-size:13px;font-weight:700;color:#2c3e50;letter-spacing:1px;margin-bottom:6px;text-transform:uppercase}
+.page-sub{font-size:10px;color:#7f8c8d;margin-bottom:20px;letter-spacing:.3px}
+.canvas-wrap{background:#f4f6f9;border:1px solid #d0d7de;border-radius:4px;position:relative;overflow:visible}
+.tbl{position:absolute;border:1px solid #c0ccd8;border-radius:0;overflow:hidden;
+  box-shadow:0 1px 3px rgba(0,0,0,.08);background:#fff;
+  transition:box-shadow .12s,border-color .12s;z-index:2}
+.tbl:hover{box-shadow:0 3px 12px rgba(0,0,0,.18);border-color:#4a7fc1;z-index:20}
+.th{padding:5px 8px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(0,0,0,.15);cursor:default}
+.th-name{color:#fff;font-weight:700;font-size:12px}
+.th-cnt{color:rgba(255,255,255,.5);font-size:8.5px}
+.row{display:flex;align-items:center;padding:1.5px 7px 1.5px 4px;border-bottom:1px solid #edf0f3;min-height:19px;background:#fff}
+.row:nth-child(even){background:#fafbfc}
+.row:last-child{border-bottom:none}
+.row:hover{background:#eef4fb}
+.row-ico{width:13px;flex-shrink:0;font-size:9px;text-align:center;margin-right:1px}
+.pk-ico{color:#d4860c}.fk-ico{color:#3a6ea8}
+.row-name{flex:1;color:#1a2733;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:11px}
+.row-name.is-pk{color:#b8730a;font-weight:600}
+.row-name.is-fk,.row-name.is-nolink{color:#2a5a9c;font-weight:500}
+.row-type{color:#7a8e9c;font-size:9px;white-space:nowrap;margin-left:5px;flex-shrink:0}
+.nn{display:inline-block;font-size:7.5px;color:#999;font-weight:700;margin-left:2px;vertical-align:middle}
+svg.ov{position:absolute;top:0;left:0;overflow:visible;pointer-events:none;z-index:1}
+.zone-label{position:absolute;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;opacity:.25;pointer-events:none;z-index:0}
+</style>
+</head>
+<body>
+<div class="page-title">⬡ Law-Partner · Logical ERD</div>
+<div class="canvas-wrap" id="canvas">
+  <svg class="ov" id="lines">
+    <defs>
+      <marker id="mk-dot" markerWidth="5" markerHeight="5" refX="2.5" refY="2.5">
+        <circle cx="2.5" cy="2.5" r="2" fill="#8aabcc"/>
+      </marker>
+      <marker id="mk-cut" markerWidth="5" markerHeight="5" refX="2.5" refY="2.5">
+        <circle cx="2.5" cy="2.5" r="1.8" fill="#b0bfc8"/>
+      </marker>
+    </defs>
+  </svg>
+</div>
+
+<script>
+// ── 상수 ──────────────────────────────────────────────────────
+const TW=195, RH=19, HH=28;
+const MIN_LANE_GAP=4; // 레인 간격이 이 값보다 좁아지면 GUTTER_W를 키울 것
+// 열 간 gutter 폭 (다이어그램당 gutter 그룹 최대 연결 수에 맞게 여유 있게)
+const GUTTER_W=100;
+
+// ── 컬럼 x 좌표 (C[k+1] = C[k] + TW + GUTTER_W) ───────────────
+const C0=24;
+const C1=C0+TW+GUTTER_W, C2=C1+TW+GUTTER_W, C3=C2+TW+GUTTER_W, C4=C3+TW+GUTTER_W;
+
+const HDR={
+  auth:'#3a6ea8', ai:'#2e7d56', brd:'#5c3d99',
+  pay:'#8c5a10',  cs:'#8c2060', adm:'#8c2020', ind:'#4a5568'
+};
+
+function tH(t){return HH+t.cols.length*RH;}
+
+// ── 테이블 정의 ────────────────────────────────────────────────
+// 참조 이미지 배치: 회원이 중앙허브(C1), 좌측=결제/채팅, 우측=변호사/AI/게시판/관리자
+const TBLS=[
+  // COL0 — 결제·채팅·인증 독립
+  {id:'결제',          x:C0, y:20,  d:'pay', cols:[
+    {n:'결제번호',t:'varchar2(50)',pk:1},
+    {n:'회원번호',t:'number',nn:1,fk:1},
+    {n:'대상번호',t:'number'},
+    {n:'결제유형',t:'varchar2(20)',nn:1},
+    {n:'결제금액',t:'number',nn:1},
+    {n:'결제수단',t:'varchar2(20)'},
+    {n:'결제상태',t:'varchar2(20)'},
+    {n:'결제일시',t:'date'},
+  ]},
+  {id:'채팅방',        x:C0, y:230, d:'pay', cols:[
+    {n:'채팅방ID',t:'varchar2(50)',pk:1},
+    {n:'의뢰인번호',t:'number',nn:1,fk:1},
+    {n:'변호사번호',t:'number',nn:1,fk:1},
+    {n:'상태코드',t:'varchar2(20)'},
+    {n:'진행단계코드',t:'varchar2(20)'},
+    {n:'등록일시',t:'date'},
+  ]},
+  {id:'채팅메시지',    x:C0, y:402, d:'pay', cols:[
+    {n:'메시지번호',t:'number',pk:1},
+    {n:'채팅방ID',t:'varchar2(50)',nn:1,fk:1},
+    {n:'발신자번호',t:'number',nn:1},
+    {n:'메시지내용',t:'varchar2(4000)'},
+    {n:'메시지유형',t:'varchar2(10)'},
+    {n:'파일URL',t:'varchar2(500)'},
+    {n:'읽음여부',t:'char(1)'},
+    {n:'발송일시',t:'date'},
+  ]},
+  {id:'리프레시토큰',  x:C0, y:612, d:'auth', cols:[
+    {n:'토큰ID',t:'number',pk:1},
+    {n:'회원번호',t:'number',nn:1,fk:1},
+    {n:'토큰값',t:'varchar2(64)',nn:1},
+    {n:'만료일시',t:'date',nn:1},
+  ]},
+  {id:'고객문의',      x:C0, y:746, d:'cs', cols:[
+    {n:'문의번호',t:'number',pk:1},
+    {n:'작성자번호',t:'number',nn:1,fk:1},
+    {n:'문의유형',t:'varchar2(100)',nn:1},
+    {n:'제목',t:'varchar2(300)',nn:1},
+    {n:'내용',t:'clob',nn:1},
+    {n:'상태',t:'varchar2(20)'},
+    {n:'답변내용',t:'clob'},
+    {n:'답변자명',t:'varchar2(100)'},
+    {n:'답변일시',t:'timestamp'},
+    {n:'등록일시',t:'timestamp',nn:1},
+    {n:'수정일시',t:'timestamp',nn:1},
+  ]},
+
+  // COL1 — 회원 허브
+  {id:'회원',          x:C1, y:20,  d:'auth', cols:[
+    {n:'회원번호',t:'number',pk:1},
+    {n:'아이디',t:'varchar2(50)',nn:1},
+    {n:'비밀번호',t:'varchar2(256)',nn:1},
+    {n:'실명',t:'varchar2(50)',nn:1},
+    {n:'닉네임',t:'varchar2(50)'},
+    {n:'이메일',t:'varchar2(256)',nn:1},
+    {n:'전화번호',t:'varchar2(256)',nn:1},
+    {n:'권한코드',t:'varchar2(20)'},
+    {n:'상태코드',t:'varchar2(20)'},
+    {n:'실패횟수',t:'number'},
+    {n:'잠금일시',t:'date'},
+    {n:'가입일시',t:'date'},
+    {n:'이메일해시',t:'varchar2(64)'},
+    {n:'전화번호해시',t:'varchar2(64)'},
+    {n:'임시비번변경필요여부',t:'char(1)'},
+    {n:'프로필이미지',t:'varchar2(500)'},
+  ]},
+
+  // COL2 — 변호사·AI·알림
+  {id:'변호사상세',    x:C2, y:20,  d:'auth', cols:[
+    {n:'회원번호',t:'number',pk:1,fk:1},
+    {n:'자격증파일',t:'varchar2(500)'},
+    {n:'라이선스번호',t:'varchar2(100)'},
+    {n:'사무실명',t:'varchar2(100)'},
+    {n:'사무실주소',t:'varchar2(200)'},
+    {n:'출신유형',t:'varchar2(50)'},
+    {n:'자기소개',t:'varchar2(4000)'},
+    {n:'프로필이미지URL',t:'varchar2(500)'},
+    {n:'승인여부',t:'char(1)'},
+    {n:'구독만료일',t:'date'},
+    {n:'전문분야',t:'varchar2(1000)'},
+  ]},
+  {id:'사건일정',      x:C2, y:320, d:'pay', cols:[
+    {n:'일정번호',t:'number',pk:1},
+    {n:'채팅방ID',t:'varchar2(50)',nolink:1},
+    {n:'의뢰인번호',t:'number',nolink:1},
+    {n:'변호사번호',t:'number',nolink:1},
+    {n:'제목',t:'varchar2(200)',nn:1},
+    {n:'시작일시',t:'varchar2(50)',nn:1},
+    {n:'색상코드',t:'varchar2(20)'},
+    {n:'등록일시',t:'date'},
+  ]},
+  {id:'AI채팅이력',    x:C2, y:540, d:'ai', cols:[
+    {n:'로그번호',t:'number',pk:1},
+    {n:'채팅방번호',t:'number',fk:1},
+    {n:'회원번호',t:'number',fk:1},
+    {n:'카테고리코드',t:'varchar2(20)'},
+    {n:'질문내용',t:'varchar2(4000)'},
+    {n:'답변내용',t:'clob'},
+    {n:'토큰사용량',t:'number'},
+    {n:'등록일시',t:'date'},
+    {n:'관련판례목록',t:'clob'},
+  ]},
+  {id:'AI채팅방',      x:C2, y:760, d:'ai', cols:[
+    {n:'채팅방번호',t:'number',pk:1},
+    {n:'회원번호',t:'number',fk:1},
+    {n:'제목',t:'varchar2(200)'},
+    {n:'마지막질문',t:'clob'},
+    {n:'등록일시',t:'date'},
+    {n:'수정일시',t:'date'},
+    {n:'마지막채팅일시',t:'date'},
+  ]},
+  {id:'알림',          x:C1, y:432, d:'cs', cols:[
+    {n:'알림번호',t:'number',pk:1},
+    {n:'회원번호',t:'number',nn:1,fk:1},
+    {n:'알림제목',t:'varchar2(100)'},
+    {n:'알림내용',t:'varchar2(500)'},
+    {n:'읽음여부',t:'char(1)'},
+    {n:'등록일시',t:'date'},
+    {n:'채팅방ID',t:'varchar2(50)',fk:1},
+  ]},
+
+  // COL3 — 게시판·증명문서·후기
+  {id:'변호사증명문서', x:C3, y:20,  d:'auth', cols:[
+    {n:'문서번호',t:'number',pk:1},
+    {n:'회원번호',t:'number',nn:1,fk:1},
+    {n:'문서유형',t:'varchar2(50)',nn:1},
+    {n:'원본파일명',t:'varchar2(500)',nn:1},
+    {n:'저장파일명',t:'varchar2(500)',nn:1},
+    {n:'파일경로',t:'varchar2(500)',nn:1},
+    {n:'파일크기',t:'number'},
+    {n:'등록일시',t:'date'},
+  ]},
+  {id:'변호사답변',    x:C3, y:230, d:'brd', cols:[
+    {n:'답변번호',t:'number',pk:1},
+    {n:'게시글번호',t:'number',nn:1,fk:1},
+    {n:'작성자번호',t:'number',nn:1,fk:1},
+    {n:'내용',t:'varchar2(4000)',nn:1},
+    {n:'채택여부',t:'char(1)'},
+    {n:'등록일시',t:'date'},
+  ]},
+  {id:'상담게시판',    x:C3, y:402, d:'brd', cols:[
+    {n:'게시글번호',t:'number',pk:1},
+    {n:'카테고리코드',t:'varchar2(20)',nn:1},
+    {n:'제목',t:'varchar2(300)',nn:1},
+    {n:'내용',t:'clob',nn:1},
+    {n:'작성자번호',t:'number',nn:1,fk:1},
+    {n:'비밀글여부',t:'char(1)'},
+    {n:'블라인드여부',t:'char(1)'},
+    {n:'조회수',t:'number'},
+    {n:'등록일시',t:'date'},
+    {n:'댓글수',t:'number'},
+    {n:'매칭여부',t:'char(1)'},
+    {n:'닉네임공개여부',t:'char(1)'},
+  ]},
+  {id:'게시판첨부파일', x:C3, y:688, d:'brd', cols:[
+    {n:'파일번호',t:'number',pk:1},
+    {n:'게시글번호',t:'number',nn:1,fk:1},
+    {n:'원본파일명',t:'varchar2(255)',nn:1},
+    {n:'저장파일명',t:'varchar2(255)',nn:1},
+    {n:'등록일시',t:'date'},
+    {n:'파일경로',t:'varchar2(500)'},
+  ]},
+  {id:'후기',          x:C3, y:860, d:'cs', cols:[
+    {n:'후기번호',t:'number',pk:1},
+    {n:'변호사번호',t:'number',nn:1,fk:1},
+    {n:'작성자번호',t:'number',nn:1,fk:1},
+    {n:'평점',t:'number(2,1)'},
+    {n:'내용',t:'varchar2(1000)'},
+    {n:'등록일시',t:'date'},
+    {n:'답변번호',t:'number'},
+    {n:'작성자명',t:'varchar2(50)'},
+  ]},
+
+  // COL4 — 관리자·보안·독립
+  {id:'관리자감사로그', x:C4, y:20,  d:'adm', cols:[
+    {n:'감사번호',t:'number',pk:1},
+    {n:'관리자번호',t:'number',nn:1,nolink:1},
+    {n:'관리자아이디',t:'varchar2(50)'},
+    {n:'행위유형',t:'varchar2(30)',nn:1},
+    {n:'대상정보',t:'varchar2(200)',nn:1},
+    {n:'수행사유',t:'varchar2(200)'},
+    {n:'추적ID',t:'varchar2(50)'},
+    {n:'에러여부',t:'char(1)'},
+    {n:'에러메시지',t:'varchar2(500)'},
+    {n:'요청IP',t:'varchar2(50)'},
+    {n:'접속환경',t:'varchar2(200)'},
+    {n:'등록일시',t:'date'},
+  ]},
+  {id:'접속로그',      x:C4, y:306, d:'adm', cols:[
+    {n:'로그번호',t:'number',pk:1},
+    {n:'추적ID',t:'varchar2(50)'},
+    {n:'요청IP',t:'varchar2(50)'},
+    {n:'요청URI',t:'varchar2(200)'},
+    {n:'접속환경',t:'varchar2(200)'},
+    {n:'회원번호',t:'number',nolink:1},
+    {n:'상태코드',t:'number(3)'},
+    {n:'실행시간',t:'number'},
+    {n:'에러메시지',t:'varchar2(4000)'},
+    {n:'등록일시',t:'date'},
+  ]},
+  {id:'공통코드',      x:C4, y:554, d:'ind', cols:[
+    {n:'그룹코드',t:'varchar2(20)',pk:1},
+    {n:'상세코드',t:'varchar2(20)',pk:1},
+    {n:'코드명',t:'varchar2(100)',nn:1},
+    {n:'사용여부',t:'char(1)'},
+  ]},
+  {id:'IP블랙리스트',  x:C4, y:688, d:'adm', cols:[
+    {n:'차단IP',t:'varchar2(50)',pk:1},
+    {n:'차단사유',t:'varchar2(200)',nn:1},
+    {n:'관리자번호',t:'number',nn:1,nolink:1},
+    {n:'차단일시',t:'date'},
+  ]},
+  {id:'금지어',        x:C4, y:822, d:'adm', cols:[
+    {n:'금지어번호',t:'number',pk:1},
+    {n:'단어',t:'varchar2(100)',nn:1},
+    {n:'관리자번호',t:'number',nn:1,nolink:1},
+    {n:'등록일시',t:'date'},
+    {n:'차단사유',t:'varchar2(200)'},
+  ]},
+  {id:'일별통계',      x:C4, y:975, d:'ind', cols:[
+    {n:'통계일자',t:'char(8)',pk:1},
+    {n:'신규가입수',t:'number'},
+    {n:'방문자수',t:'number'},
+    {n:'상담요청수',t:'number'},
+  ]},
+];
+
+// ── 물리 FK 관계 ───────────────────────────────────────────────
+const RELS=[
+  // 회원 ↔ 변호사상세 (1:1)
+  {f:'회원',          fc:'회원번호',   t:'변호사상세',     tc:'회원번호',    seq:0},
+  // 변호사상세 → 자식들
+  {f:'변호사상세',    fc:'회원번호',   t:'변호사증명문서', tc:'회원번호',    seq:1},
+  {f:'변호사상세',    fc:'회원번호',   t:'변호사답변',     tc:'작성자번호',  seq:2},
+  {f:'변호사상세',    fc:'회원번호',   t:'채팅방',         tc:'변호사번호',  seq:3},
+  {f:'변호사상세',    fc:'회원번호',   t:'후기',           tc:'변호사번호',  seq:4},
+  // 회원 → 자식들
+  {f:'회원',          fc:'회원번호',   t:'AI채팅방',       tc:'회원번호',    seq:5},
+  {f:'회원',          fc:'회원번호',   t:'AI채팅이력',     tc:'회원번호',    seq:6},
+  {f:'회원',          fc:'회원번호',   t:'상담게시판',     tc:'작성자번호',  seq:7},
+  {f:'회원',          fc:'회원번호',   t:'결제',           tc:'회원번호',    seq:8},
+  {f:'회원',          fc:'회원번호',   t:'채팅방',         tc:'의뢰인번호',  seq:9},
+  {f:'회원',          fc:'회원번호',   t:'알림',           tc:'회원번호',    seq:10},
+  {f:'회원',          fc:'회원번호',   t:'후기',           tc:'작성자번호',  seq:11},
+  {f:'회원',          fc:'회원번호',   t:'고객문의',       tc:'작성자번호',  seq:12},
+  {f:'회원',          fc:'회원번호',   t:'리프레시토큰',   tc:'회원번호',    seq:13},
+  // AI
+  {f:'AI채팅방',      fc:'채팅방번호', t:'AI채팅이력',     tc:'채팅방번호',  seq:14},
+  // 채팅방
+  {f:'채팅방',        fc:'채팅방ID',   t:'채팅메시지',     tc:'채팅방ID',    seq:15},
+  {f:'채팅방',        fc:'채팅방ID',   t:'알림',           tc:'채팅방ID',    seq:16},
+  // 게시판
+  {f:'상담게시판',    fc:'게시글번호', t:'게시판첨부파일', tc:'게시글번호',  seq:17},
+  {f:'상담게시판',    fc:'게시글번호', t:'변호사답변',     tc:'게시글번호',  seq:18},
+];
+
+// ── FK 단절 점선 ───────────────────────────────────────────────
+const CUTS=[
+  {f:'채팅방', fc:'채팅방ID', t:'사건일정', tc:'채팅방ID', seq:50},
+];
+
+// ── 헬퍼 ──────────────────────────────────────────────────────
+const TM={};
+TBLS.forEach(t=>TM[t.id]=t);
+function rowY(t,col){
+  const i=t.cols.findIndex(c=>c.n===col);
+  return t.y+HH+(i<0?0:i)*RH+RH/2;
+}
+
+// ══════════════════════════════════════════════════════════════
+// 라우팅 엔진 — Y-sorted lane assignment
+// 원칙:
+//   1. 컬럼 쌍 사이 gutter 에 레인 풀 사전 생성
+//   2. 각 gutter 를 통과하는 연결선을 midY 기준으로 정렬
+//   3. 정렬 순서대로 레인 왼→오른 순 배정 → 선 교차 최소화
+//   4. 같은 열 연결: COL0 왼쪽 / COL1~4 오른쪽 바깥 우회
+// ══════════════════════════════════════════════════════════════
+
+// 컬럼 경계 (right edge of each col)
+// ══════════════════════════════════════════════════════════════
+// 라우팅 엔진
+// 원칙:
+//   1. gutter 레인 풀 사전 생성 (각 컬럼 쌍 사이 빈 공간)
+//   2. 수직 세그먼트가 반드시 gutter 안에서만 주행 → 테이블 관통 원천 차단
+//   3. 같은 열 연결: 오른쪽 gutter 짧은 스텁 (gutter 내부)
+//   4. Y-sorted 레인 배정으로 선 교차 최소화
+// ══════════════════════════════════════════════════════════════
+
+// 각 gutter 범위 (테이블이 없는 빈 공간, 폭 = GUTTER_W)
+const GUTTERS = [
+  {lo:C0+TW, hi:C1},    // 0-1
+  {lo:C1+TW, hi:C2},    // 1-2
+  {lo:C2+TW, hi:C3},    // 2-3
+  {lo:C3+TW, hi:C4},    // 3-4
+];
+const MARGIN = 4; // gutter 양쪽 여백
+
+// gutter 안에 n개 수직 레인 균등 배치 (그룹 연결 수 = 레인 수 → 동일 gutter 내 X 재사용 없음)
+function buildLanes(g, n) {
+  n = Math.max(n, 1);
+  const lo = g.lo + MARGIN, hi = g.hi - MARGIN;
+  const inner = hi - lo;
+  const step = inner / (n + 1);
+  return Array.from({length:n}, (_,i) => Math.round(lo + step*(i+1)));
+}
+const LEFT_GUTTER = { lo: C0 - 72, hi: C0 - 8 };
+
+function gutterForStubCol(col) {
+  if (col >= 0 && col < GUTTERS.length) return GUTTERS[col];
+  return { lo: C4 + TW, hi: C4 + TW + GUTTER_W };
+}
+
+function colOf(t) {
+  if (t.x <= C0+5) return 0;
+  if (t.x <= C1+5) return 1;
+  if (t.x <= C2+5) return 2;
+  if (t.x <= C3+5) return 3;
+  return 4;
+}
+
+// 수직 세그먼트가 어떤 gutter를 써야 하는지 결정
+// F→T 연결에서 두 테이블 사이의 모든 gutter 를 통과해야 함
+// 하지만 H-V-H 경로는 단 하나의 midX만 사용 → 두 테이블 사이 첫 번째 gutter 사용
+function gutterKeyBetween(fc, tc) {
+  const lo = Math.min(fc, tc), hi = Math.max(fc, tc);
+  if (lo === hi) return `stub${lo}`;  // 같은 열
+  return `g${lo}`;  // lo 열의 오른쪽 gutter
+}
+
+// 레인 배정
+const laneAssign = new Map();
+
+function assignAllLanes(allConns) {
+  const groups = {};
+  allConns.forEach((c, i) => {
+    const F=TM[c.f], T=TM[c.t];
+    if (!F||!T) return;
+    const y1=rowY(F,c.fc), y2=rowY(T,c.tc);
+    const fc=colOf(F), tc=colOf(T);
+    const key = gutterKeyBetween(fc, tc);
+    if (!groups[key]) groups[key]=[];
+    groups[key].push({id:i, y1, y2, midY:(y1+y2)/2, fc, tc});
+  });
+
+  Object.entries(groups).forEach(([key, items]) => {
+    items.sort((a,b)=>a.midY-b.midY);
+    const need = Math.max(items.length, 1);
+    let pool;
+    if (key.startsWith('g')) {
+      pool = buildLanes(GUTTERS[+key.slice(1)], need);
+    } else if (key.startsWith('stub')) {
+      const col = +key.slice(4);
+      pool = buildLanes(gutterForStubCol(col), need);
+    } else {
+      pool = buildLanes(LEFT_GUTTER, need);
+    }
+    items.forEach((item, rank) => {
+      laneAssign.set(item.id, {
+        val: pool[rank],
+        key, fc:item.fc, tc:item.tc, y1:item.y1, y2:item.y2
+      });
+    });
+  });
+}
+
+function getPath(connIdx) {
+  const c = allConns[connIdx];
+  const F=TM[c.f], T=TM[c.t];
+  if (!F||!T) return '';
+  const y1=rowY(F,c.fc), y2=rowY(T,c.tc);
+  const FR=F.x+TW, FL=F.x, TR=T.x+TW, TL=T.x;
+  const fc=colOf(F), tc=colOf(T);
+  const info = laneAssign.get(connIdx);
+  if (!info) return '';
+  const {val, key} = info;
+
+  // 같은 열 → 오른쪽 gutter 내 절대 X (buildLanes)
+  if (key.startsWith('stub')) {
+    const stubX = val;
+    return `M${FR},${y1} H${stubX} V${y2} H${TR}`;
+  }
+  // 왼쪽 우회
+  if (key === 'left') {
+    return `M${FL},${y1} H${val} V${y2} H${TL}`;
+  }
+  // 다른 열 → midX = gutter 안의 레인 X (절대값)
+  if (FR+2 <= TL) return `M${FR},${y1} H${val} V${y2} H${TL}`;
+  if (TR+2 <= FL) return `M${FL},${y1} H${val} V${y2} H${TR}`;
+  // fallback
+  return `M${FR},${y1} H${val} V${y2} H${TR}`;
+}
+
+// ── 전체 연결 목록 + 레인 배정 실행 ──────────────────────────
+const allConns = [...RELS, ...CUTS];
+assignAllLanes(allConns);
+
+// ── 테이블 렌더링 ──────────────────────────────────────────────
+const canvas=document.getElementById('canvas');
+
+TBLS.forEach(t=>{
+  const el=document.createElement('div');
+  el.className='tbl';
+  const hdr=HDR[t.d]||'#3a6ea8';
+  el.style.cssText=`left:${t.x}px;top:${t.y}px;width:${TW}px`;
+  let html=`<div class="th" style="background:${hdr}">
+    <span class="th-name">${t.id}</span>
+    <span class="th-cnt">${t.cols.length}</span>
+  </div>`;
+  t.cols.forEach(col=>{
+    const isPK=!!col.pk,isFK=!!col.fk,isNL=!!col.nolink;
+    const ico=isPK?`<span class="row-ico pk-ico">▶</span>`:
+              (isFK||isNL)?`<span class="row-ico fk-ico">◆</span>`:
+              `<span class="row-ico"></span>`;
+    const nc=isPK?'row-name is-pk':isFK?'row-name is-fk':isNL?'row-name is-nolink':'row-name';
+    const nn=col.nn?`<span class="nn">NN</span>`:'';
+    html+=`<div class="row">${ico}<span class="${nc}">${col.n}${nn}</span><span class="row-type">${col.t}</span></div>`;
+  });
+  el.innerHTML=html;
+  canvas.appendChild(el);
+});
+
+// ── 캔버스 크기 자동 계산 ──────────────────────────────────────
+(function sizeCanvas(){
+  let maxB=800, maxR=800;
+  TBLS.forEach(t=>{maxB=Math.max(maxB,t.y+tH(t));maxR=Math.max(maxR,t.x+TW);});
+  canvas.style.height=(maxB+60)+'px';
+  canvas.style.width= (maxR+60)+'px';
+})();
+
+// ── SVG 선 그리기 ──────────────────────────────────────────────
+const svg=document.getElementById('lines');
+const FK_COLOR='#b0c4d8', FK_W=1.4;
+
+RELS.forEach((r,i)=>{
+  const d=getPath(i);
+  if(!d)return;
+  const p=document.createElementNS('http://www.w3.org/2000/svg','path');
+  p.setAttribute('d',d);
+  p.setAttribute('stroke',FK_COLOR);
+  p.setAttribute('stroke-width',FK_W);
+  p.setAttribute('fill','none');
+  p.setAttribute('marker-start','url(#mk-dot)');
+  p.setAttribute('marker-end','url(#mk-dot)');
+  svg.appendChild(p);
+});
+
+CUTS.forEach((r,i)=>{
+  const d=getPath(RELS.length+i);
+  if(!d)return;
+  const p=document.createElementNS('http://www.w3.org/2000/svg','path');
+  p.setAttribute('d',d);
+  p.setAttribute('stroke','#b8c8d8');
+  p.setAttribute('stroke-width','1.1');
+  p.setAttribute('stroke-dasharray','5,3');
+  p.setAttribute('fill','none');
+  p.setAttribute('marker-end','url(#mk-cut)');
+  svg.appendChild(p);
+});
+
+
+</script>
+</body>
+</html>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { ExternalLink, Github, Play, X } from "lucide-react";
+import { ExternalLink, Github, Maximize2, Play, X } from "lucide-react";
 import type { ProjectItem } from "../types/project";
 
 type ProjectTabsViewProps = {
@@ -220,7 +220,36 @@ export function ProjectTabsView({ project }: ProjectTabsViewProps) {
           aria-labelledby={`subtab-${project.id}-${activeTab.id}`}
           className="min-h-[8rem] rounded-xl border border-white/10 bg-black/25 p-4 sm:p-5"
         >
-          {activeTab.images && activeTab.images.length > 0 && (
+          {activeTab.embedPage && (
+            <div className="mb-6 space-y-3">
+              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 pb-3">
+                <p className="text-xs text-zinc-500">아래는 미리보기입니다. 넓은 화면은 새 탭에서 보세요.</p>
+                <a
+                  href={new URL(publicAssetUrl(activeTab.embedPage), window.location.origin).href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-accent/50 bg-accent/15 px-3 py-1.5 text-sm font-medium text-accent transition hover:bg-accent/25"
+                >
+                  <Maximize2 className="h-4 w-4" aria-hidden />
+                  전체보기
+                  <ExternalLink className="h-3.5 w-3.5 opacity-80" aria-hidden />
+                </a>
+              </div>
+              <div
+                className="overflow-auto rounded-lg border border-white/10 bg-[#e8ecf0] shadow-inner"
+                style={{ maxHeight: "min(70vh, 720px)" }}
+              >
+                <iframe
+                  title={`${project.title} — ${activeTab.label}`}
+                  src={publicAssetUrl(activeTab.embedPage)}
+                  className="h-[min(68vh,680px)] w-full min-h-[320px] border-0 bg-[#e8ecf0]"
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+              </div>
+            </div>
+          )}
+          {activeTab.images && activeTab.images.length > 0 && !activeTab.embedPage && (
             <div className="mb-6 space-y-4">
               {activeTab.images.map((src) => {
                 const fullUrl = publicAssetUrl(src);

@@ -48,7 +48,7 @@
       {
         "id": "erd",
         "label": "ERD",
-        "images": ["projects/lawpartner/erd.png"],
+        "embedPage": "projects/lawpartner/lawpartner-erd.html",
         "content": "【논리 ERD 요약 — Law-Partner】\n\n• 회원을 중심으로 결제·채팅방/메시지·리프레시 토큰·고객문의·알림 등이 1:N으로 연결됩니다.\n• 변호사 영역: 변호사상세·구독, 선일정(사건 일정), AI채팅방·AI채팅이력, 증명문서.\n• 상담·콘텐츠: 상담게시판 ↔ 변호사답변·첨부파일·후기로 문의→답변→평가 흐름을 구성합니다.\n• 운영·보안: 관리자감사로그, 접속로그·IP블랙리스트, 공통코드·금지어·일별통계로 감사·모더레이션·집계를 지원합니다."
       },
       {

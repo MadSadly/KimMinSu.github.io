@@ -6,6 +6,11 @@ export interface ProjectDetailTab {
   content: string;
   /** public 기준 경로 (예: projects/lawpartner/network.png), 탭 상단에 순서대로 표시 */
   images?: string[];
+  /**
+   * public 기준 HTML 페이지 (예: projects/lawpartner/erd.html).
+   * 있으면 탭에 iframe 미리보기 + 전체보기(새 탭)를 쓰고, 보통 images는 비웁니다.
+   */
+  embedPage?: string;
 }
 
 /** JSON 설정으로 불러오는 프로젝트 항목 타입 */
