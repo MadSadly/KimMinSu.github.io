@@ -18,8 +18,10 @@ export interface ProjectItem {
   /** true면 상단에 시연 영상(플레이스홀더) 영역 표시 */
   showDemoPlaceholder?: boolean;
   /**
-   * public 기준 경로 (앞의 / 없이). 예: "videos/medneduro-demo.mp4"
-   * 설정 시 <video>로 재생, GitHub Pages 는 import.meta.env.BASE_URL 이 붙습니다.
+   * 시연 영상
+   * - 상대 경로: public 기준 (예: "videos/foo.mp4") → BASE_URL 붙여 <video>
+   * - http(s)://… 직접 mp4 → 그 URL로 <video> (CDN·외부 호스팅, GitHub 용량 제한 회피)
+   * - YouTube watch/shorts/youtu.be 링크 → iframe 임베드
    */
   demoVideoSrc?: string;
   /** 있으면 탭 UI로 상세 표시; 없으면 기본 ProjectCard */

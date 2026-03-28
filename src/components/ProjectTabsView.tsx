@@ -11,6 +11,46 @@ function publicAssetUrl(relativePath: string): string {
   return `${import.meta.env.BASE_URL}${relativePath.replace(/^\//, "")}`;
 }
 
+function parseYoutubeVideoId(url: string): string | null {
+  try {
+    const u = new URL(url);
+    if (u.hostname === "youtu.be") {
+      const id = u.pathname.replace(/^\//, "").split("/")[0];
+      return id && /^[\w-]{6,}$/.test(id) ? id : null;
+    }
+    if (!u.hostname.includes("youtube.com")) return null;
+    if (u.pathname.startsWith("/embed/")) {
+      return u.pathname.slice("/embed/".length).split("/")[0] || null;
+    }
+    if (u.pathname.startsWith("/shorts/")) {
+      return u.pathname.slice("/shorts/".length).split("/")[0] || null;
+    }
+    const v = u.searchParams.get("v");
+    return v && /^[\w-]{6,}$/.test(v) ? v : null;
+  } catch {
+    return null;
+  }
+}
+
+type DemoMedia =
+  | { kind: "iframe"; src: string }
+  | { kind: "video"; src: string };
+
+function resolveDemoMedia(demoVideoSrc: string): DemoMedia {
+  const raw = demoVideoSrc.trim();
+  if (/^https?:\/\//i.test(raw)) {
+    const ytId = parseYoutubeVideoId(raw);
+    if (ytId) {
+      return {
+        kind: "iframe",
+        src: `https://www.youtube.com/embed/${ytId}`,
+      };
+    }
+    return { kind: "video", src: raw };
+  }
+  return { kind: "video", src: publicAssetUrl(raw) };
+}
+
 /**
  * LawPartner 등 — 상단 시연 영상 영역 + 하위 탭(배경·개요·목표 등)
  * 영상은 나중에 <video> 또는 iframe 으로 교체하면 됩니다.
@@ -76,6 +116,10 @@ export function ProjectTabsView({ project }: ProjectTabsViewProps) {
       document.body
     );
 
+  const demoMedia = project.demoVideoSrc
+    ? resolveDemoMedia(project.demoVideoSrc)
+    : null;
+
   return (
     <article className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 shadow-glass backdrop-blur-md sm:p-6">
       {lightbox}
@@ -96,20 +140,30 @@ export function ProjectTabsView({ project }: ProjectTabsViewProps) {
       {/* 메인: 시연 영상 — demoVideoSrc 있으면 재생, 없으면 플레이스홀더 */}
       {(project.demoVideoSrc || project.showDemoPlaceholder !== false) && (
         <div className="mb-6">
-          {project.demoVideoSrc ? (
+          {demoMedia ? (
             <div
               className="overflow-hidden rounded-xl border border-white/10 bg-black shadow-lg"
               aria-label="시연 영상"
             >
-              <video
-                className="aspect-video w-full bg-black object-contain"
-                controls
-                playsInline
-                preload="metadata"
-                src={`${import.meta.env.BASE_URL}${project.demoVideoSrc.replace(/^\//, "")}`}
-              >
-                시연 영상을 재생할 수 없습니다. 브라우저가 MP4 재생을 지원하는지 확인하세요.
-              </video>
+              {demoMedia.kind === "iframe" ? (
+                <iframe
+                  className="aspect-video w-full bg-black"
+                  src={demoMedia.src}
+                  title="시연 영상"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                />
+              ) : (
+                <video
+                  className="aspect-video w-full bg-black object-contain"
+                  controls
+                  playsInline
+                  preload="metadata"
+                  src={demoMedia.src}
+                >
+                  시연 영상을 재생할 수 없습니다. 브라우저가 MP4 재생을 지원하는지 확인하세요.
+                </video>
+              )}
             </div>
           ) : (
             <div
@@ -120,7 +174,9 @@ export function ProjectTabsView({ project }: ProjectTabsViewProps) {
               <div className="space-y-1">
                 <p className="text-sm font-medium text-zinc-300">시연 영상</p>
                 <p className="text-xs text-zinc-500">
-                  준비되면 여기에 &lt;video&gt; 또는 YouTube·Vimeo 임베드를 넣으면 됩니다.
+                  <code className="rounded bg-white/5 px-1 py-0.5 text-[0.7rem]">projects.json</code>의{" "}
+                  <code className="rounded bg-white/5 px-1 py-0.5 text-[0.7rem]">demoVideoSrc</code>에
+                  YouTube 링크 또는 mp4 URL을 넣으면 GitHub Pages에서도 재생됩니다.
                 </p>
               </div>
             </div>
