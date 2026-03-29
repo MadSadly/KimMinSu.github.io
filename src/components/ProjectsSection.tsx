@@ -69,7 +69,7 @@ export function ProjectsSection({ projects }: ProjectsSectionProps) {
             aria-labelledby={`project-tab-${active.id}`}
           >
             {active.detailTabs && active.detailTabs.length > 0 ? (
-              <ProjectTabsView project={active} />
+              <ProjectTabsView key={active.id} project={active} />
             ) : (
               <ProjectCard project={active} />
             )}

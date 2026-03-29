@@ -51,6 +51,85 @@ function resolveDemoMedia(demoVideoSrc: string): DemoMedia {
   return { kind: "video", src: publicAssetUrl(raw) };
 }
 
+/** 통합 테스트 갤러리: 섹션 전환 시 이전 이미지를 유지한 뒤 디코드·페이드 인 (빈 화면 깜빡임 방지) */
+function GalleryCrossfadeImage({
+  srcRel,
+  onOpenLightbox,
+}: {
+  srcRel: string;
+  onOpenLightbox: (fullUrl: string) => void;
+}) {
+  const fullUrl = publicAssetUrl(srcRel);
+  const [baseUrl, setBaseUrl] = useState(fullUrl);
+  const [overlayUrl, setOverlayUrl] = useState<string | null>(null);
+  const [overlayVisible, setOverlayVisible] = useState(false);
+
+  useEffect(() => {
+    if (fullUrl === baseUrl) return;
+    setOverlayUrl(fullUrl);
+    setOverlayVisible(false);
+  }, [fullUrl, baseUrl]);
+
+  const finishOverlay = (loadedSrc: string) => {
+    setBaseUrl(loadedSrc);
+    setOverlayUrl(null);
+    setOverlayVisible(false);
+  };
+
+  const handleOverlayLoad: React.ReactEventHandler<HTMLImageElement> = (e) => {
+    const loadedSrc = e.currentTarget.currentSrc || e.currentTarget.src;
+    const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
+    if (reduceMotion) {
+      finishOverlay(loadedSrc);
+      return;
+    }
+    requestAnimationFrame(() => setOverlayVisible(true));
+  };
+
+  const handleOverlayTransitionEnd: React.TransitionEventHandler<HTMLImageElement> = (e) => {
+    if (e.propertyName !== "opacity") return;
+    finishOverlay(e.currentTarget.currentSrc || e.currentTarget.src);
+  };
+
+  return (
+    <figure className="overflow-hidden rounded-lg border border-white/10 bg-zinc-950/80">
+      <button
+        type="button"
+        className="group relative block w-full min-h-[12rem] text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+        onClick={() => onOpenLightbox(fullUrl)}
+        aria-label="이미지 크게 보기"
+      >
+        <div className="relative w-full">
+          <img
+            src={baseUrl}
+            alt=""
+            className="relative z-0 w-full object-contain"
+            decoding="async"
+            draggable={false}
+          />
+          {overlayUrl && (
+            <img
+              key={overlayUrl}
+              src={overlayUrl}
+              alt=""
+              decoding="async"
+              draggable={false}
+              onLoad={handleOverlayLoad}
+              onTransitionEnd={handleOverlayTransitionEnd}
+              className={`absolute inset-0 z-[1] w-full object-contain transition-opacity duration-300 ease-out motion-reduce:transition-none ${
+                overlayVisible ? "opacity-100" : "opacity-0"
+              }`}
+            />
+          )}
+        </div>
+        <span className="pointer-events-none absolute bottom-2 right-2 z-[2] rounded bg-black/60 px-2 py-1 text-[10px] text-zinc-300 opacity-0 transition group-hover:opacity-100 sm:text-xs">
+          클릭하여 확대
+        </span>
+      </button>
+    </figure>
+  );
+}
+
 /**
  * LawPartner 등 — 상단 시연 영상 영역 + 하위 탭(배경·개요·목표 등)
  * 영상은 나중에 <video> 또는 iframe 으로 교체하면 됩니다.
@@ -92,11 +171,13 @@ export function ProjectTabsView({ project }: ProjectTabsViewProps) {
     return list.filter((s) => s.label.toLowerCase().includes(q));
   }, [gallerySectionsRaw, galleryFilter]);
 
+  /* 상세 탭 id가 바뀔 때만 갤러리 초기화 — 배열 참조만 바뀌는 리렌더에서는 건드리지 않음 */
   useEffect(() => {
-    if (!gallerySectionsRaw?.length) return;
-    setGallerySectionId(gallerySectionsRaw[0].id);
+    const sections = activeTab?.imageSections;
+    if (!sections?.length) return;
+    setGallerySectionId(sections[0].id);
     setGalleryFilter("");
-  }, [activeTab?.id, gallerySectionsRaw]);
+  }, [activeTab?.id]);
 
   useEffect(() => {
     if (!filteredGallerySections.length) return;
@@ -111,6 +192,19 @@ export function ProjectTabsView({ project }: ProjectTabsViewProps) {
   const gallerySectionIndex = activeGallerySection
     ? filteredGallerySections.findIndex((s) => s.id === activeGallerySection.id)
     : -1;
+
+  /* 인접 섹션 이미지 선로드 — 이전/다음 전환 시 디코드 비용 감소 */
+  useEffect(() => {
+    if (!filteredGallerySections.length || gallerySectionIndex < 0) return;
+    const idx = gallerySectionIndex;
+    for (const i of [idx - 1, idx + 1]) {
+      const sec = filteredGallerySections[i];
+      const rel = sec?.images?.[0];
+      if (!rel) continue;
+      const img = new Image();
+      img.src = publicAssetUrl(rel);
+    }
+  }, [filteredGallerySections, gallerySectionIndex]);
 
   const lightbox =
     lightboxUrl &&
@@ -361,32 +455,9 @@ export function ProjectTabsView({ project }: ProjectTabsViewProps) {
                   </div>
                 </div>
               )}
-              {activeGallerySection?.images.map((src) => {
-                const fullUrl = publicAssetUrl(src);
-                return (
-                  <figure
-                    key={src}
-                    className="overflow-hidden rounded-lg border border-white/10 bg-zinc-950/50"
-                  >
-                    <button
-                      type="button"
-                      className="group relative block w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
-                      onClick={() => setLightboxUrl(fullUrl)}
-                      aria-label="이미지 크게 보기"
-                    >
-                      <img
-                        src={fullUrl}
-                        alt=""
-                        className="w-full cursor-zoom-in object-contain transition group-hover:opacity-95"
-                        loading="lazy"
-                      />
-                      <span className="pointer-events-none absolute bottom-2 right-2 rounded bg-black/60 px-2 py-1 text-[10px] text-zinc-300 opacity-0 transition group-hover:opacity-100 sm:text-xs">
-                        클릭하여 확대
-                      </span>
-                    </button>
-                  </figure>
-                );
-              })}
+              {activeGallerySection?.images.map((src) => (
+                <GalleryCrossfadeImage key={src} srcRel={src} onOpenLightbox={setLightboxUrl} />
+              ))}
             </div>
           )}
           {activeTab.images &&
