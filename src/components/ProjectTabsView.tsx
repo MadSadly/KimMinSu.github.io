@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { ChevronLeft, ChevronRight, ExternalLink, Github, Maximize2, Play, X } from "lucide-react";
 import type { ProjectItem } from "../types/project";
@@ -139,7 +139,6 @@ export function ProjectTabsView({ project }: ProjectTabsViewProps) {
   const [tabId, setTabId] = useState(tabs[0]?.id ?? "");
   const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
   const [gallerySectionId, setGallerySectionId] = useState<string>("");
-  const [galleryFilter, setGalleryFilter] = useState("");
 
   /* 상단 프로젝트 탭 전환 시 하위 탭을 첫 항목으로 리셋 */
   useEffect(() => {
@@ -164,47 +163,41 @@ export function ProjectTabsView({ project }: ProjectTabsViewProps) {
   const activeTab = tabs.find((t) => t.id === tabId) ?? tabs[0];
 
   const gallerySectionsRaw = activeTab?.imageSections;
-  const filteredGallerySections = useMemo(() => {
-    const list = gallerySectionsRaw ?? [];
-    const q = galleryFilter.trim().toLowerCase();
-    if (!q) return list;
-    return list.filter((s) => s.label.toLowerCase().includes(q));
-  }, [gallerySectionsRaw, galleryFilter]);
+  const gallerySectionsList = gallerySectionsRaw ?? [];
 
   /* 상세 탭 id가 바뀔 때만 갤러리 초기화 — 배열 참조만 바뀌는 리렌더에서는 건드리지 않음 */
   useEffect(() => {
     const sections = activeTab?.imageSections;
     if (!sections?.length) return;
     setGallerySectionId(sections[0].id);
-    setGalleryFilter("");
   }, [activeTab?.id]);
 
   useEffect(() => {
-    if (!filteredGallerySections.length) return;
-    if (!filteredGallerySections.some((s) => s.id === gallerySectionId)) {
-      setGallerySectionId(filteredGallerySections[0].id);
+    if (!gallerySectionsList.length) return;
+    if (!gallerySectionsList.some((s) => s.id === gallerySectionId)) {
+      setGallerySectionId(gallerySectionsList[0].id);
     }
-  }, [filteredGallerySections, gallerySectionId]);
+  }, [gallerySectionsList, gallerySectionId]);
 
   const activeGallerySection =
-    filteredGallerySections.find((s) => s.id === gallerySectionId) ?? filteredGallerySections[0];
+    gallerySectionsList.find((s) => s.id === gallerySectionId) ?? gallerySectionsList[0];
 
   const gallerySectionIndex = activeGallerySection
-    ? filteredGallerySections.findIndex((s) => s.id === activeGallerySection.id)
+    ? gallerySectionsList.findIndex((s) => s.id === activeGallerySection.id)
     : -1;
 
   /* 인접 섹션 이미지 선로드 — 이전/다음 전환 시 디코드 비용 감소 */
   useEffect(() => {
-    if (!filteredGallerySections.length || gallerySectionIndex < 0) return;
+    if (!gallerySectionsList.length || gallerySectionIndex < 0) return;
     const idx = gallerySectionIndex;
     for (const i of [idx - 1, idx + 1]) {
-      const sec = filteredGallerySections[i];
+      const sec = gallerySectionsList[i];
       const rel = sec?.images?.[0];
       if (!rel) continue;
       const img = new Image();
       img.src = publicAssetUrl(rel);
     }
-  }, [filteredGallerySections, gallerySectionIndex]);
+  }, [gallerySectionsList, gallerySectionIndex]);
 
   const lightbox =
     lightboxUrl &&
@@ -375,28 +368,16 @@ export function ProjectTabsView({ project }: ProjectTabsViewProps) {
           )}
           {gallerySectionsRaw && gallerySectionsRaw.length > 0 && !activeTab.embedPage && (
             <div className="mb-6 space-y-4">
-              <div className="flex flex-col gap-3 border-b border-white/10 pb-4 sm:flex-row sm:items-center sm:justify-between">
-                <p className="text-xs text-zinc-400">
-                  섹션을 선택하거나 검색해 통합 테스트 표·리스크 정리를 나눠 볼 수 있습니다. 이미지를 누르면 전체 화면으로
-                  확대됩니다.
-                </p>
-                <label className="relative shrink-0 sm:max-w-xs sm:flex-1">
-                  <span className="sr-only">섹션 검색</span>
-                  <input
-                    type="search"
-                    value={galleryFilter}
-                    onChange={(e) => setGalleryFilter(e.target.value)}
-                    placeholder="섹션 검색…"
-                    className="w-full rounded-lg border border-white/15 bg-zinc-950/80 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-accent/50 focus:outline-none focus:ring-1 focus:ring-accent/40"
-                  />
-                </label>
-              </div>
+              <p className="border-b border-white/10 pb-4 text-xs text-zinc-400">
+                아래 칩에서 섹션을 고르면 통합 테스트 표·리스크 정리를 나눠 볼 수 있습니다. 이미지를 누르면 전체 화면으로
+                확대됩니다.
+              </p>
               <div
                 className="flex flex-wrap gap-2"
                 role="tablist"
                 aria-label="문서 섹션"
               >
-                {filteredGallerySections.map((s) => {
+                {gallerySectionsList.map((s) => {
                   const on = s.id === activeGallerySection?.id;
                   return (
                     <button
@@ -416,10 +397,7 @@ export function ProjectTabsView({ project }: ProjectTabsViewProps) {
                   );
                 })}
               </div>
-              {filteredGallerySections.length === 0 && (
-                <p className="text-sm text-zinc-500">검색어에 맞는 섹션이 없습니다.</p>
-              )}
-              {activeGallerySection && filteredGallerySections.length > 0 && (
+              {activeGallerySection && gallerySectionsList.length > 0 && (
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                   <p className="text-sm font-medium text-zinc-200">{activeGallerySection.label}</p>
                   <div className="flex items-center gap-1">
@@ -428,7 +406,7 @@ export function ProjectTabsView({ project }: ProjectTabsViewProps) {
                       className="inline-flex items-center gap-1 rounded-lg border border-white/15 bg-zinc-900/80 px-2 py-1.5 text-xs text-zinc-300 transition hover:border-accent/40 hover:text-accent disabled:opacity-40"
                       disabled={gallerySectionIndex <= 0}
                       onClick={() => {
-                        const prev = filteredGallerySections[gallerySectionIndex - 1];
+                        const prev = gallerySectionsList[gallerySectionIndex - 1];
                         if (prev) setGallerySectionId(prev.id);
                       }}
                       aria-label="이전 섹션"
@@ -437,14 +415,14 @@ export function ProjectTabsView({ project }: ProjectTabsViewProps) {
                       이전
                     </button>
                     <span className="px-2 text-xs tabular-nums text-zinc-500">
-                      {gallerySectionIndex + 1} / {filteredGallerySections.length}
+                      {gallerySectionIndex + 1} / {gallerySectionsList.length}
                     </span>
                     <button
                       type="button"
                       className="inline-flex items-center gap-1 rounded-lg border border-white/15 bg-zinc-900/80 px-2 py-1.5 text-xs text-zinc-300 transition hover:border-accent/40 hover:text-accent disabled:opacity-40"
-                      disabled={gallerySectionIndex >= filteredGallerySections.length - 1}
+                      disabled={gallerySectionIndex >= gallerySectionsList.length - 1}
                       onClick={() => {
-                        const next = filteredGallerySections[gallerySectionIndex + 1];
+                        const next = gallerySectionsList[gallerySectionIndex + 1];
                         if (next) setGallerySectionId(next.id);
                       }}
                       aria-label="다음 섹션"
