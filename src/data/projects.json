@@ -99,7 +99,7 @@
       },
       {
         "id": "goals",
-        "label": "프로젝트 목표",
+        "label": "목표",
         "images": ["projects/medneduro/goals.png"],
         "content": "① 고해상도 영상: NII·MRI 표준화, 대용량 영상 고속 로딩, 무손실 정밀도 유지\n② 직관적 3D 가시화: 볼륨 렌더링·ROI·투명도·컬러맵으로 환자별 정밀 진단 지원\n③ 상호작용 분석: 실시간 분할·측정, 웹 협업·원격 판독, 맞춤 리포팅·AI 보조 분석"
       },
@@ -116,22 +116,22 @@
         "content": "• 클라이언트: HTML5·JS·jQuery, Three.js로 3D 뇌 시각화 → 인터넷으로 백엔드 접속\n• 앱 백엔드: Spring Boot REST API, 인증·보안 처리 후 처리 요청 전달\n• 데이터 링크: Python 서버가 NIfTI·DICOM → 2D MRI 단면(Axial/Sagittal/Coronal)·3D 모델(.obj) 생성\n• DB: SQL DB에 계정·메타데이터·접근 로그 저장"
       },
       {
-        "id": "schedule",
-        "label": "프로젝트 일정",
-        "images": ["projects/medneduro/project-schedule.png"],
-        "content": "4주 간트 기준: 1주차 UI/기능 분석·설계·DB 설계·PPT, 2주차 로그인·파일관리·회원/파일 DB·2D/3D 분석 착수, 3주차 진단/코멘트 UI·DB·분석 지속, 4주차 분석 마무리·PPT 정리. 색상: UI(파랑)·DB(초록)·문서(빨강)."
-      },
-      {
         "id": "erd",
         "label": "ERD",
         "images": ["projects/medneduro/erd.png"],
-        "content": "INTEGRATED_ACCOUNT 중심으로 의료진·환자·일반 사용자 계정을 분리하고, MEDICAL_MRI_FOLDER / GENERAL_MRI_FOLDER에 영상 메타·AI 분석 상태를 둡니다. DIAGNOSIS_COMMENT_2D·3D로 단면·메시 좌표 기반 진단 코멘트를 저장하고, MRI_ACCESS_LOG로 열람 이력을 남깁니다."
+        "content": "【논리 ERD 요약 — MedNeuro】\n\n• 통합계정: 로그인·상태·가입일 등 공통 인증 정보. 의료진·환자·일반회원이 각각 계정번호로 1:1 연결됩니다.\n• 진료과 ↔ 의료진: 진료과ID로 소속을 두고, 의사면허·직무·직급 등 프로필을 관리합니다.\n• 의사–환자 MRI: 의사환자MRI파일에 경로·촬영일·슬라이스·AI판독상태·모델버전을 두고, MRI성공기록으로 최근 분석 이력을 남깁니다.\n• 진단 코멘트: 2D진단코멘트(영역·슬라이스·XY), 3D진단코멘트(XYZ·메시ID·면인덱스)로 단면·볼륨 기록을 분리 저장합니다.\n• 일반회원: 일반회원MRI파일에 자가 업로드 영상 경로·AI요약·슬라이스 수 등을 보관합니다."
       },
       {
         "id": "team",
         "label": "팀원 및 역할",
         "images": ["projects/medneduro/team.png"],
         "content": "• 변운조(조장) — 의료 영상 처리 프로세스 설계, NII 업로드→분석→진단 워크플로, PPT·발표\n• 김민수(조원) — 로그인·권한, 촬영 영상·분석 결과 조회 UI, 의료 데이터 DB·조회 로직\n• 이준오(조장) — MRI 촬영 데이터 업로드, 환자별 NII 관리, DB 내 촬영 데이터 저장·유지\n• 홍승현(조원) — MRI 기반 진단 입력, 진단 코멘트·환자 기록 저장, 진단 이력·DB 연동"
+      },
+      {
+        "id": "schedule",
+        "label": "프로젝트 스케쥴",
+        "images": ["projects/medneduro/project-schedule.png"],
+        "content": "4주 간트 기준: 1주차 UI/기능 분석·설계·DB 설계·PPT, 2주차 로그인·파일관리·회원/파일 DB·2D/3D 분석 착수, 3주차 진단/코멘트 UI·DB·분석 지속, 4주차 분석 마무리·PPT 정리. 색상: UI(파랑)·DB(초록)·문서(빨강)."
       }
     ]
   }
