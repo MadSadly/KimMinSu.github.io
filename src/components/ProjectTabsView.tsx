@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
-import { ExternalLink, Github, Maximize2, Play, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, ExternalLink, Github, Maximize2, Play, X } from "lucide-react";
 import type { ProjectItem } from "../types/project";
 
 type ProjectTabsViewProps = {
@@ -59,6 +59,8 @@ export function ProjectTabsView({ project }: ProjectTabsViewProps) {
   const tabs = project.detailTabs ?? [];
   const [tabId, setTabId] = useState(tabs[0]?.id ?? "");
   const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
+  const [gallerySectionId, setGallerySectionId] = useState<string>("");
+  const [galleryFilter, setGalleryFilter] = useState("");
 
   /* 상단 프로젝트 탭 전환 시 하위 탭을 첫 항목으로 리셋 */
   useEffect(() => {
@@ -81,6 +83,34 @@ export function ProjectTabsView({ project }: ProjectTabsViewProps) {
   }, [lightboxUrl]);
 
   const activeTab = tabs.find((t) => t.id === tabId) ?? tabs[0];
+
+  const gallerySectionsRaw = activeTab?.imageSections;
+  const filteredGallerySections = useMemo(() => {
+    const list = gallerySectionsRaw ?? [];
+    const q = galleryFilter.trim().toLowerCase();
+    if (!q) return list;
+    return list.filter((s) => s.label.toLowerCase().includes(q));
+  }, [gallerySectionsRaw, galleryFilter]);
+
+  useEffect(() => {
+    if (!gallerySectionsRaw?.length) return;
+    setGallerySectionId(gallerySectionsRaw[0].id);
+    setGalleryFilter("");
+  }, [activeTab?.id, gallerySectionsRaw]);
+
+  useEffect(() => {
+    if (!filteredGallerySections.length) return;
+    if (!filteredGallerySections.some((s) => s.id === gallerySectionId)) {
+      setGallerySectionId(filteredGallerySections[0].id);
+    }
+  }, [filteredGallerySections, gallerySectionId]);
+
+  const activeGallerySection =
+    filteredGallerySections.find((s) => s.id === gallerySectionId) ?? filteredGallerySections[0];
+
+  const gallerySectionIndex = activeGallerySection
+    ? filteredGallerySections.findIndex((s) => s.id === activeGallerySection.id)
+    : -1;
 
   const lightbox =
     lightboxUrl &&
@@ -249,7 +279,120 @@ export function ProjectTabsView({ project }: ProjectTabsViewProps) {
               </div>
             </div>
           )}
-          {activeTab.images && activeTab.images.length > 0 && !activeTab.embedPage && (
+          {gallerySectionsRaw && gallerySectionsRaw.length > 0 && !activeTab.embedPage && (
+            <div className="mb-6 space-y-4">
+              <div className="flex flex-col gap-3 border-b border-white/10 pb-4 sm:flex-row sm:items-center sm:justify-between">
+                <p className="text-xs text-zinc-400">
+                  섹션을 선택하거나 검색해 통합 테스트 표·리스크 정리를 나눠 볼 수 있습니다. 이미지를 누르면 전체 화면으로
+                  확대됩니다.
+                </p>
+                <label className="relative shrink-0 sm:max-w-xs sm:flex-1">
+                  <span className="sr-only">섹션 검색</span>
+                  <input
+                    type="search"
+                    value={galleryFilter}
+                    onChange={(e) => setGalleryFilter(e.target.value)}
+                    placeholder="섹션 검색…"
+                    className="w-full rounded-lg border border-white/15 bg-zinc-950/80 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-accent/50 focus:outline-none focus:ring-1 focus:ring-accent/40"
+                  />
+                </label>
+              </div>
+              <div
+                className="flex flex-wrap gap-2"
+                role="tablist"
+                aria-label="문서 섹션"
+              >
+                {filteredGallerySections.map((s) => {
+                  const on = s.id === activeGallerySection?.id;
+                  return (
+                    <button
+                      key={s.id}
+                      type="button"
+                      role="tab"
+                      aria-selected={on}
+                      onClick={() => setGallerySectionId(s.id)}
+                      className={`rounded-lg border px-2.5 py-1.5 text-left text-xs font-medium transition sm:text-sm ${
+                        on
+                          ? "border-accent/50 bg-accent/15 text-accent"
+                          : "border-white/10 bg-zinc-950/50 text-zinc-400 hover:border-white/20 hover:text-zinc-200"
+                      }`}
+                    >
+                      {s.label}
+                    </button>
+                  );
+                })}
+              </div>
+              {filteredGallerySections.length === 0 && (
+                <p className="text-sm text-zinc-500">검색어에 맞는 섹션이 없습니다.</p>
+              )}
+              {activeGallerySection && filteredGallerySections.length > 0 && (
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                  <p className="text-sm font-medium text-zinc-200">{activeGallerySection.label}</p>
+                  <div className="flex items-center gap-1">
+                    <button
+                      type="button"
+                      className="inline-flex items-center gap-1 rounded-lg border border-white/15 bg-zinc-900/80 px-2 py-1.5 text-xs text-zinc-300 transition hover:border-accent/40 hover:text-accent disabled:opacity-40"
+                      disabled={gallerySectionIndex <= 0}
+                      onClick={() => {
+                        const prev = filteredGallerySections[gallerySectionIndex - 1];
+                        if (prev) setGallerySectionId(prev.id);
+                      }}
+                      aria-label="이전 섹션"
+                    >
+                      <ChevronLeft className="h-4 w-4" aria-hidden />
+                      이전
+                    </button>
+                    <span className="px-2 text-xs tabular-nums text-zinc-500">
+                      {gallerySectionIndex + 1} / {filteredGallerySections.length}
+                    </span>
+                    <button
+                      type="button"
+                      className="inline-flex items-center gap-1 rounded-lg border border-white/15 bg-zinc-900/80 px-2 py-1.5 text-xs text-zinc-300 transition hover:border-accent/40 hover:text-accent disabled:opacity-40"
+                      disabled={gallerySectionIndex >= filteredGallerySections.length - 1}
+                      onClick={() => {
+                        const next = filteredGallerySections[gallerySectionIndex + 1];
+                        if (next) setGallerySectionId(next.id);
+                      }}
+                      aria-label="다음 섹션"
+                    >
+                      다음
+                      <ChevronRight className="h-4 w-4" aria-hidden />
+                    </button>
+                  </div>
+                </div>
+              )}
+              {activeGallerySection?.images.map((src) => {
+                const fullUrl = publicAssetUrl(src);
+                return (
+                  <figure
+                    key={src}
+                    className="overflow-hidden rounded-lg border border-white/10 bg-zinc-950/50"
+                  >
+                    <button
+                      type="button"
+                      className="group relative block w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+                      onClick={() => setLightboxUrl(fullUrl)}
+                      aria-label="이미지 크게 보기"
+                    >
+                      <img
+                        src={fullUrl}
+                        alt=""
+                        className="w-full cursor-zoom-in object-contain transition group-hover:opacity-95"
+                        loading="lazy"
+                      />
+                      <span className="pointer-events-none absolute bottom-2 right-2 rounded bg-black/60 px-2 py-1 text-[10px] text-zinc-300 opacity-0 transition group-hover:opacity-100 sm:text-xs">
+                        클릭하여 확대
+                      </span>
+                    </button>
+                  </figure>
+                );
+              })}
+            </div>
+          )}
+          {activeTab.images &&
+            activeTab.images.length > 0 &&
+            !activeTab.embedPage &&
+            !gallerySectionsRaw?.length && (
             <div className="mb-6 space-y-4">
               {activeTab.images.map((src) => {
                 const fullUrl = publicAssetUrl(src);

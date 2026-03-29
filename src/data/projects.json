@@ -49,7 +49,74 @@
         "id": "erd",
         "label": "ERD",
         "embedPage": "projects/lawpartner/lawpartner-erd.html",
-        "content": "【논리 ERD 요약 — Law-Partner】\n\n• 회원을 중심으로 결제·채팅방/메시지·리프레시 토큰·고객문의·알림 등이 1:N으로 연결됩니다.\n• 변호사 영역: 변호사상세·구독, 선일정(사건 일정), AI채팅방·AI채팅이력, 증명문서.\n• 상담·콘텐츠: 상담게시판 ↔ 변호사답변·첨부파일·후기로 문의→답변→평가 흐름을 구성합니다.\n• 운영·보안: 관리자감사로그, 접속로그·IP블랙리스트, 공통코드·금지어·일별통계로 감사·모더레이션·집계를 지원합니다."
+        "content": "【논리 ERD 요약 — Law-Partner】\n\n• 회원을 중심으로 결제·채팅방/메시지·리프레시 토큰·고객문의·알림 등이 1:N으로 연결됩니다.\n• 변호사 영역: 변호사상세·구독, 선일정(사건 일정), AI채팅방·AI채팅이력, 증명문서.\n• 상담·콘텐츠: 상담게시판 ↔ 변호사답변·첨부파일·후기로 문의→답변·평가 흐름을 구성합니다.\n• 운영·보안: 관리자감사로그, 접속로그·IP블랙리스트, 공통코드·금지어·일별통계로 감사·모더레이션·집계를 지원합니다."
+      },
+      {
+        "id": "qa-risk",
+        "label": "통합 테스트 · 리스크",
+        "content": "【2026 통합 테스트 · 리스크】\n\n• 통합 테스트: 메인·로그인·회원가입·마이(일반/변호사)·AI 상담·상담 게시판·1:1 채팅·전문가 찾기·고객센터·관리자 등 화면별로 권한·시나리오·예상 결과·실행 결과를 표로 정리했습니다. (총 78건 시나리오 기준, 실제 수치는 개요 슬라이드 참고)\n• 리스크 관리: React–Spring–FastAPI 다계층 연동, RAG·벡터 DB 적재, 보안·로그, 협업·API 규약 등에서의 이슈와 대응을 두 장의 슬라이드로 요약했습니다.\n• 보기 방법: 아래에서 섹션 칩을 고르거나 검색창에 키워드(예: 채팅, AI, 관리자)를 입력해 해당 표만 골라 볼 수 있습니다. 이미지를 누르면 전체 화면으로 확대됩니다.",
+        "imageSections": [
+          {
+            "id": "overview",
+            "label": "통합 테스트 개요",
+            "images": ["projects/lawpartner/qa/12-test-overview.png"]
+          },
+          {
+            "id": "risk-arch",
+            "label": "리스크 관리 — 기술 · 아키텍처",
+            "images": ["projects/lawpartner/qa/10-risk-architecture.png"]
+          },
+          {
+            "id": "risk-team",
+            "label": "리스크 관리 — 협업 · 프로세스",
+            "images": ["projects/lawpartner/qa/11-risk-collaboration.png"]
+          },
+          {
+            "id": "main-login",
+            "label": "메인 · 로그인",
+            "images": ["projects/lawpartner/qa/01-main-login.png"]
+          },
+          {
+            "id": "signup-mypage",
+            "label": "회원가입 · 일반 마이페이지",
+            "images": ["projects/lawpartner/qa/02-signup-mypage-general.png"]
+          },
+          {
+            "id": "lawyer-dash",
+            "label": "변호사 마이페이지",
+            "images": ["projects/lawpartner/qa/03-lawyer-mypage.png"]
+          },
+          {
+            "id": "ai-chat",
+            "label": "AI 상담",
+            "images": ["projects/lawpartner/qa/04-ai-consultation.png"]
+          },
+          {
+            "id": "board",
+            "label": "상담 게시판",
+            "images": ["projects/lawpartner/qa/05-consultation-board.png"]
+          },
+          {
+            "id": "chat-1to1",
+            "label": "1:1 채팅",
+            "images": ["projects/lawpartner/qa/06-chat-1to1.png"]
+          },
+          {
+            "id": "experts",
+            "label": "전문가 찾기",
+            "images": ["projects/lawpartner/qa/07-experts.png"]
+          },
+          {
+            "id": "customer",
+            "label": "고객센터",
+            "images": ["projects/lawpartner/qa/08-customer-center.png"]
+          },
+          {
+            "id": "admin",
+            "label": "관리자 · 권한/보안",
+            "images": ["projects/lawpartner/qa/09-admin-security.png"]
+          }
+        ]
       },
       {
         "id": "team",
