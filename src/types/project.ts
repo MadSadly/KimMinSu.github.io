@@ -35,7 +35,8 @@ export interface ProjectItem {
   id: string;
   title: string;
   description: string;
-  githubUrl: string;
+  /** 없으면 카드·상세에서 GitHub 버튼을 숨깁니다 */
+  githubUrl?: string;
   tags: string[];
   /** true면 상단에 시연 영상(플레이스홀더) 영역 표시 */
   showDemoPlaceholder?: boolean;

@@ -176,7 +176,6 @@
     "id": "ai-portfolio",
     "title": "AI 포트폴리오",
     "description": "머신러닝·딥러닝·LLM 영역의 학습·프로젝트를 정리한 포트폴리오입니다. UCI 심장질환 데이터 기반 분류 모델(ML), 의료 영상·3D 파이프라인(DL), 법률 RAG·LLM 연동(LLM) 등을 다룹니다.",
-    "githubUrl": "https://github.com/MadSadly",
     "tags": [
       "Machine Learning",
       "Deep Learning",

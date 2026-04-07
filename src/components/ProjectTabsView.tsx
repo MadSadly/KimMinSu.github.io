@@ -239,16 +239,17 @@ export function ProjectTabsView({ project }: ProjectTabsViewProps) {
           </>
         ) : (
           <div
-            className="flex h-[min(92vh,900px)] w-full max-w-5xl flex-col gap-2"
+            className="flex h-[min(96dvh,960px)] w-full max-w-6xl flex-col gap-1"
             onClick={(e) => e.stopPropagation()}
           >
             <p className="shrink-0 text-center text-xs text-zinc-500">
-              브라우저 PDF 뷰어로 표시됩니다. 바깥 어두운 영역을 클릭하거나 Esc로 닫을 수 있습니다.
+              브라우저 PDF 뷰어입니다. 바깥 어두운 영역을 클릭하거나 Esc로 닫을 수 있습니다.
             </p>
             <iframe
               title="PDF 전체 화면"
               src={lightbox.url}
               className="min-h-0 w-full flex-1 rounded-lg border border-white/10 bg-zinc-900"
+              style={{ minHeight: "min(88dvh, 880px)" }}
             />
           </div>
         )}
@@ -265,16 +266,18 @@ export function ProjectTabsView({ project }: ProjectTabsViewProps) {
       {lightboxPortal}
       <div className="mb-6 flex flex-wrap items-start justify-between gap-3">
         <h3 className="text-xl font-semibold text-zinc-50">{project.title}</h3>
-        <a
-          href={project.githubUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 rounded-lg border border-accent/40 bg-accent/10 px-3 py-1.5 text-sm font-medium text-accent transition hover:bg-accent/20"
-        >
-          <Github className="h-4 w-4" aria-hidden />
-          GitHub
-          <ExternalLink className="h-3.5 w-3.5 opacity-70" aria-hidden />
-        </a>
+        {project.githubUrl && (
+          <a
+            href={project.githubUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-accent/40 bg-accent/10 px-3 py-1.5 text-sm font-medium text-accent transition hover:bg-accent/20"
+          >
+            <Github className="h-4 w-4" aria-hidden />
+            GitHub
+            <ExternalLink className="h-3.5 w-3.5 opacity-70" aria-hidden />
+          </a>
+        )}
       </div>
 
       {/* 메인: 시연 영상 — demoVideoSrc 있으면 재생, 없으면 플레이스홀더 */}
@@ -365,12 +368,14 @@ export function ProjectTabsView({ project }: ProjectTabsViewProps) {
               const pdfRel = activeTab.embedPdf;
               const pdfUrl = new URL(publicAssetUrl(pdfRel), window.location.origin).href;
               return (
-                <div className="mb-6 space-y-3">
-                  <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 pb-3">
-                    <p className="text-xs text-zinc-500">
-                      아래에서 PDF를 바로 볼 수 있습니다. 우측 하단 또는 버튼으로 전체 화면을 열 수 있습니다.
+                <div className="mb-4 space-y-3 sm:mb-5">
+                  <div className="flex flex-col gap-2 border-b border-white/10 pb-3 sm:flex-row sm:items-center sm:justify-between">
+                    <p className="text-xs leading-relaxed text-zinc-500">
+                      아래 영역에서 PDF를 바로 읽을 수 있습니다. 긴 문서는{" "}
+                      <span className="text-zinc-400">전체 화면</span> 또는{" "}
+                      <span className="text-zinc-400">새 탭</span>이 더 편합니다.
                     </p>
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex shrink-0 flex-wrap gap-2">
                       <button
                         type="button"
                         onClick={() => setLightbox({ kind: "pdf", url: pdfUrl })}
@@ -390,22 +395,13 @@ export function ProjectTabsView({ project }: ProjectTabsViewProps) {
                       </a>
                     </div>
                   </div>
-                  <div className="relative overflow-hidden rounded-lg border border-white/10 bg-zinc-900/50 shadow-inner">
+                  <div className="overflow-hidden rounded-lg border border-white/10 bg-zinc-900/50 shadow-inner">
                     <iframe
                       title={`${project.title} — ${activeTab.label} PDF`}
                       src={publicAssetUrl(pdfRel)}
-                      className="h-[min(68vh,680px)] w-full min-h-[320px] border-0 bg-zinc-100"
+                      className="block h-[min(85dvh,920px)] w-full min-h-[min(70dvh,560px)] border-0 bg-zinc-100"
                       loading="lazy"
                     />
-                    <button
-                      type="button"
-                      className="absolute bottom-3 right-3 z-10 inline-flex items-center gap-1.5 rounded-lg border border-accent/50 bg-zinc-950/90 px-3 py-2 text-xs font-medium text-accent shadow-lg backdrop-blur-sm transition hover:bg-accent/20 sm:text-sm"
-                      onClick={() => setLightbox({ kind: "pdf", url: pdfUrl })}
-                      aria-label="PDF 전체 화면으로 보기"
-                    >
-                      <Maximize2 className="h-4 w-4 shrink-0" aria-hidden />
-                      전체 화면
-                    </button>
                   </div>
                 </div>
               );
@@ -545,25 +541,62 @@ export function ProjectTabsView({ project }: ProjectTabsViewProps) {
               })}
             </div>
           )}
-          <div className="whitespace-pre-wrap break-keep text-sm leading-relaxed text-zinc-300">
-            {activeTab.content}
-          </div>
-          {/* 개요 탭에서 태그도 함께 보이도록: id가 overview 일 때 / AI 포트폴리오는 ML 탭 */}
-          {(activeTab.id === "overview" ||
-            (project.id === "ai-portfolio" && activeTab.id === "ml")) &&
-            project.tags.length > 0 && (
-            <ul
-              className="mt-4 flex flex-wrap gap-2 border-t border-white/10 pt-4"
-              aria-label="기술 태그"
-            >
-              {project.tags.map((tag) => (
-                <li key={tag}>
-                  <span className="rounded-md bg-zinc-800/80 px-2 py-0.5 text-xs text-zinc-400">
-                    {tag}
+          {activeTab.embedPdf ? (
+            <>
+              {(activeTab.id === "overview" ||
+                (project.id === "ai-portfolio" && activeTab.id === "ml")) &&
+                project.tags.length > 0 && (
+                <ul
+                  className="mb-3 flex flex-wrap gap-2"
+                  aria-label="기술 태그"
+                >
+                  {project.tags.map((tag) => (
+                    <li key={tag}>
+                      <span className="rounded-md bg-zinc-800/80 px-2 py-0.5 text-xs text-zinc-400">
+                        {tag}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <details className="mt-1 rounded-lg border border-white/10 bg-zinc-950/30">
+                <summary className="cursor-pointer list-none px-4 py-3 text-sm font-medium text-zinc-200 transition hover:bg-white/[0.06] [&::-webkit-details-marker]:hidden">
+                  <span className="inline-flex items-center gap-2">
+                    <span aria-hidden className="text-zinc-500">
+                      ▸
+                    </span>
+                    요약·상세 텍스트 펼치기
                   </span>
-                </li>
-              ))}
-            </ul>
+                </summary>
+                <div className="border-t border-white/10 px-4 pb-4 pt-3">
+                  <div className="whitespace-pre-wrap break-keep text-sm leading-relaxed text-zinc-300">
+                    {activeTab.content}
+                  </div>
+                </div>
+              </details>
+            </>
+          ) : (
+            <>
+              <div className="whitespace-pre-wrap break-keep text-sm leading-relaxed text-zinc-300">
+                {activeTab.content}
+              </div>
+              {(activeTab.id === "overview" ||
+                (project.id === "ai-portfolio" && activeTab.id === "ml")) &&
+                project.tags.length > 0 && (
+                <ul
+                  className="mt-4 flex flex-wrap gap-2 border-t border-white/10 pt-4"
+                  aria-label="기술 태그"
+                >
+                  {project.tags.map((tag) => (
+                    <li key={tag}>
+                      <span className="rounded-md bg-zinc-800/80 px-2 py-0.5 text-xs text-zinc-400">
+                        {tag}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </>
           )}
         </div>
       )}
