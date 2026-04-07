@@ -3,6 +3,11 @@ import { createPortal } from "react-dom";
 import { ChevronLeft, ChevronRight, ExternalLink, Github, Maximize2, Play, X } from "lucide-react";
 import type { ProjectItem } from "../types/project";
 
+type LightboxState =
+  | { kind: "image"; url: string }
+  | { kind: "pdf"; url: string }
+  | null;
+
 type ProjectTabsViewProps = {
   project: ProjectItem;
 };
@@ -57,7 +62,7 @@ function GalleryCrossfadeImage({
   onOpenLightbox,
 }: {
   srcRel: string;
-  onOpenLightbox: (fullUrl: string) => void;
+  onOpenLightbox: (payload: { kind: "image"; url: string }) => void;
 }) {
   const fullUrl = publicAssetUrl(srcRel);
   const [baseUrl, setBaseUrl] = useState(fullUrl);
@@ -96,7 +101,7 @@ function GalleryCrossfadeImage({
       <button
         type="button"
         className="group relative block w-full min-h-[12rem] text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
-        onClick={() => onOpenLightbox(fullUrl)}
+        onClick={() => onOpenLightbox({ kind: "image", url: fullUrl })}
         aria-label="이미지 크게 보기"
       >
         <div className="relative w-full">
@@ -137,7 +142,7 @@ function GalleryCrossfadeImage({
 export function ProjectTabsView({ project }: ProjectTabsViewProps) {
   const tabs = project.detailTabs ?? [];
   const [tabId, setTabId] = useState(tabs[0]?.id ?? "");
-  const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
+  const [lightbox, setLightbox] = useState<LightboxState>(null);
   const [gallerySectionId, setGallerySectionId] = useState<string>("");
 
   /* 상단 프로젝트 탭 전환 시 하위 탭을 첫 항목으로 리셋 */
@@ -145,11 +150,11 @@ export function ProjectTabsView({ project }: ProjectTabsViewProps) {
     setTabId(project.detailTabs?.[0]?.id ?? "");
   }, [project.id]);
 
-  /* 이미지 라이트박스: ESC로 닫기, 스크롤 잠금 (GitHub Pages 정적 호스팅에서도 동작) */
+  /* 이미지·PDF 라이트박스: ESC로 닫기, 스크롤 잠금 (GitHub Pages 정적 호스팅에서도 동작) */
   useEffect(() => {
-    if (!lightboxUrl) return;
+    if (!lightbox) return;
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setLightboxUrl(null);
+      if (e.key === "Escape") setLightbox(null);
     };
     document.addEventListener("keydown", onKeyDown);
     const prevOverflow = document.body.style.overflow;
@@ -158,7 +163,7 @@ export function ProjectTabsView({ project }: ProjectTabsViewProps) {
       document.removeEventListener("keydown", onKeyDown);
       document.body.style.overflow = prevOverflow;
     };
-  }, [lightboxUrl]);
+  }, [lightbox]);
 
   const activeTab = tabs.find((t) => t.id === tabId) ?? tabs[0];
 
@@ -199,36 +204,54 @@ export function ProjectTabsView({ project }: ProjectTabsViewProps) {
     }
   }, [gallerySectionsList, gallerySectionIndex]);
 
-  const lightbox =
-    lightboxUrl &&
+  const lightboxPortal =
+    lightbox &&
     createPortal(
       <div
-        className="fixed inset-0 z-[300] flex items-center justify-center bg-black/90 p-4 backdrop-blur-sm"
+        className="fixed inset-0 z-[300] flex items-center justify-center bg-black/95 p-4 backdrop-blur-sm"
         role="dialog"
         aria-modal="true"
-        aria-label="이미지 확대 보기"
-        onClick={() => setLightboxUrl(null)}
+        aria-label={lightbox.kind === "pdf" ? "PDF 전체 화면" : "이미지 확대 보기"}
+        onClick={() => setLightbox(null)}
       >
         <button
           type="button"
-          className="absolute right-4 top-4 rounded-lg border border-white/20 bg-zinc-900/90 p-2 text-zinc-200 transition hover:bg-zinc-800 hover:text-white"
+          className="absolute right-4 top-4 z-[310] rounded-lg border border-white/20 bg-zinc-900/90 p-2 text-zinc-200 transition hover:bg-zinc-800 hover:text-white"
           aria-label="닫기"
           onClick={(e) => {
             e.stopPropagation();
-            setLightboxUrl(null);
+            setLightbox(null);
           }}
         >
           <X className="h-6 w-6" aria-hidden />
         </button>
-        <img
-          src={lightboxUrl}
-          alt=""
-          className="max-h-[min(92vh,100%)] max-w-[min(96vw,100%)] object-contain shadow-2xl"
-          onClick={(e) => e.stopPropagation()}
-        />
-        <p className="pointer-events-none absolute bottom-4 left-0 right-0 text-center text-xs text-zinc-500">
-          바깥 영역 클릭 또는 Esc로 닫기
-        </p>
+        {lightbox.kind === "image" ? (
+          <>
+            <img
+              src={lightbox.url}
+              alt=""
+              className="max-h-[min(92vh,100%)] max-w-[min(96vw,100%)] object-contain shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            />
+            <p className="pointer-events-none absolute bottom-4 left-0 right-0 text-center text-xs text-zinc-500">
+              바깥 영역 클릭 또는 Esc로 닫기
+            </p>
+          </>
+        ) : (
+          <div
+            className="flex h-[min(92vh,900px)] w-full max-w-5xl flex-col gap-2"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <p className="shrink-0 text-center text-xs text-zinc-500">
+              브라우저 PDF 뷰어로 표시됩니다. 바깥 어두운 영역을 클릭하거나 Esc로 닫을 수 있습니다.
+            </p>
+            <iframe
+              title="PDF 전체 화면"
+              src={lightbox.url}
+              className="min-h-0 w-full flex-1 rounded-lg border border-white/10 bg-zinc-900"
+            />
+          </div>
+        )}
       </div>,
       document.body
     );
@@ -239,7 +262,7 @@ export function ProjectTabsView({ project }: ProjectTabsViewProps) {
 
   return (
     <article className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 shadow-glass backdrop-blur-md sm:p-6">
-      {lightbox}
+      {lightboxPortal}
       <div className="mb-6 flex flex-wrap items-start justify-between gap-3">
         <h3 className="text-xl font-semibold text-zinc-50">{project.title}</h3>
         <a
@@ -337,6 +360,56 @@ export function ProjectTabsView({ project }: ProjectTabsViewProps) {
           aria-labelledby={`subtab-${project.id}-${activeTab.id}`}
           className="min-h-[8rem] rounded-xl border border-white/10 bg-black/25 p-4 sm:p-5"
         >
+          {activeTab.embedPdf &&
+            (() => {
+              const pdfRel = activeTab.embedPdf;
+              const pdfUrl = new URL(publicAssetUrl(pdfRel), window.location.origin).href;
+              return (
+                <div className="mb-6 space-y-3">
+                  <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 pb-3">
+                    <p className="text-xs text-zinc-500">
+                      아래에서 PDF를 바로 볼 수 있습니다. 우측 하단 또는 버튼으로 전체 화면을 열 수 있습니다.
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setLightbox({ kind: "pdf", url: pdfUrl })}
+                        className="inline-flex items-center gap-1.5 rounded-lg border border-accent/50 bg-accent/15 px-3 py-1.5 text-sm font-medium text-accent transition hover:bg-accent/25"
+                      >
+                        <Maximize2 className="h-4 w-4" aria-hidden />
+                        전체 화면
+                      </button>
+                      <a
+                        href={pdfUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 rounded-lg border border-white/15 bg-zinc-900/80 px-3 py-1.5 text-sm font-medium text-zinc-200 transition hover:border-accent/40 hover:text-accent"
+                      >
+                        새 탭에서 열기
+                        <ExternalLink className="h-3.5 w-3.5 opacity-80" aria-hidden />
+                      </a>
+                    </div>
+                  </div>
+                  <div className="relative overflow-hidden rounded-lg border border-white/10 bg-zinc-900/50 shadow-inner">
+                    <iframe
+                      title={`${project.title} — ${activeTab.label} PDF`}
+                      src={publicAssetUrl(pdfRel)}
+                      className="h-[min(68vh,680px)] w-full min-h-[320px] border-0 bg-zinc-100"
+                      loading="lazy"
+                    />
+                    <button
+                      type="button"
+                      className="absolute bottom-3 right-3 z-10 inline-flex items-center gap-1.5 rounded-lg border border-accent/50 bg-zinc-950/90 px-3 py-2 text-xs font-medium text-accent shadow-lg backdrop-blur-sm transition hover:bg-accent/20 sm:text-sm"
+                      onClick={() => setLightbox({ kind: "pdf", url: pdfUrl })}
+                      aria-label="PDF 전체 화면으로 보기"
+                    >
+                      <Maximize2 className="h-4 w-4 shrink-0" aria-hidden />
+                      전체 화면
+                    </button>
+                  </div>
+                </div>
+              );
+            })()}
           {activeTab.embedPage && (
             <div className="mb-6 space-y-3">
               <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 pb-3">
@@ -366,7 +439,7 @@ export function ProjectTabsView({ project }: ProjectTabsViewProps) {
               </div>
             </div>
           )}
-          {gallerySectionsRaw && gallerySectionsRaw.length > 0 && !activeTab.embedPage && (
+          {gallerySectionsRaw && gallerySectionsRaw.length > 0 && !activeTab.embedPage && !activeTab.embedPdf && (
             <div className="mb-6 space-y-4">
               <p className="border-b border-white/10 pb-4 text-xs text-zinc-400">
                 아래 칩에서 섹션을 고르면 통합 테스트 표·리스크 정리를 나눠 볼 수 있습니다. 이미지를 누르면 전체 화면으로
@@ -434,13 +507,14 @@ export function ProjectTabsView({ project }: ProjectTabsViewProps) {
                 </div>
               )}
               {activeGallerySection?.images.map((src) => (
-                <GalleryCrossfadeImage key={src} srcRel={src} onOpenLightbox={setLightboxUrl} />
+                <GalleryCrossfadeImage key={src} srcRel={src} onOpenLightbox={setLightbox} />
               ))}
             </div>
           )}
           {activeTab.images &&
             activeTab.images.length > 0 &&
             !activeTab.embedPage &&
+            !activeTab.embedPdf &&
             !gallerySectionsRaw?.length && (
             <div className="mb-6 space-y-4">
               {activeTab.images.map((src) => {
@@ -453,7 +527,7 @@ export function ProjectTabsView({ project }: ProjectTabsViewProps) {
                     <button
                       type="button"
                       className="group relative block w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
-                      onClick={() => setLightboxUrl(fullUrl)}
+                      onClick={() => setLightbox({ kind: "image", url: fullUrl })}
                       aria-label="이미지 크게 보기"
                     >
                       <img
@@ -474,8 +548,10 @@ export function ProjectTabsView({ project }: ProjectTabsViewProps) {
           <div className="whitespace-pre-wrap break-keep text-sm leading-relaxed text-zinc-300">
             {activeTab.content}
           </div>
-          {/* 개요 탭에서 태그도 함께 보이도록: id가 overview 일 때 */}
-          {activeTab.id === "overview" && project.tags.length > 0 && (
+          {/* 개요 탭에서 태그도 함께 보이도록: id가 overview 일 때 / AI 포트폴리오는 ML 탭 */}
+          {(activeTab.id === "overview" ||
+            (project.id === "ai-portfolio" && activeTab.id === "ml")) &&
+            project.tags.length > 0 && (
             <ul
               className="mt-4 flex flex-wrap gap-2 border-t border-white/10 pt-4"
               aria-label="기술 태그"

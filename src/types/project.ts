@@ -23,6 +23,11 @@ export interface ProjectDetailTab {
    * 있으면 탭에 iframe 미리보기 + 전체보기(새 탭)를 쓰고, 보통 images는 비웁니다.
    */
   embedPage?: string;
+  /**
+   * public 기준 PDF (예: projects/ai-portfolio/report.pdf).
+   * 페이지에 임베드하고 전체 화면·새 탭 열기를 제공합니다. embedPage·imageSections와 동시 사용하지 않습니다.
+   */
+  embedPdf?: string;
 }
 
 /** JSON 설정으로 불러오는 프로젝트 항목 타입 */
