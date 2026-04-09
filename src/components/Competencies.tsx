@@ -5,7 +5,7 @@ const items = [
   "SpringBoot 기반 REST API 및 비동기 서버 로직 설계/구현",
   "WebSocket(STOMP) 기반 실시간 채팅 시스템 구축",
   "React + Axios 기반 컴포넌트 설계 및 API 데이터 흐름 관리",
-  "Python 기반 AI 데이터 처리 서버 및 JAVA 서버 구축",
+  "Python + Java 서버 분리 설계 및 연동, 부하 분산 고려 아키텍처 구성",
   "Git 기반 협업 환경 구축 및 개발 표준화로 초기 셋업 50% 단축",
 ];
 
