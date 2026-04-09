@@ -175,14 +175,16 @@
   {
     "id": "ai-portfolio",
     "title": "AI 포트폴리오",
-    "description": "머신러닝·딥러닝·LLM 영역의 학습·프로젝트를 정리한 포트폴리오입니다. UCI 심장질환 데이터 기반 분류 모델(ML), 의료 영상·3D 파이프라인(DL), 법률 RAG·LLM 연동(LLM) 등을 다룹니다.",
+    "description": "머신러닝·딥러닝·LLM 영역의 학습·프로젝트를 정리한 포트폴리오입니다. UCI 심장질환 데이터 기반 분류 모델(ML), LNG 탱크 용접 결함 이미지 분류·전이학습(DL), 법률 RAG·LLM 연동(LLM) 등을 다룹니다.",
     "tags": [
       "Machine Learning",
       "Deep Learning",
       "LLM",
       "Python",
       "EDA",
-      "Scikit-learn"
+      "Scikit-learn",
+      "CNN",
+      "EfficientNetV2"
     ],
     "showDemoPlaceholder": false,
     "detailTabs": [
@@ -195,7 +197,8 @@
       {
         "id": "dl",
         "label": "DL",
-        "content": "【DL — 의료 영상·딥러닝 파이프라인】\n\nMedNeuro 팀 프로젝트와 연계한 딥러닝·영상 처리 요약입니다.\n\n■ 역할\nPython 기반 NIfTI·DICOM 처리, 뇌 MRI 2D 단면·3D 메시(OBJ) 생성, 분석 결과와 Spring 백엔드·DB 연동\n\n■ 스택\n백엔드(Spring)·분석 엔진(Python: Nibabel, OpenCV, NumPy 등)·Three.js 3D 뷰어\n\n■ 포인트\n임상 영상은 해상도·용량·개인정보 이슈가 있어, 전처리·메타데이터·접근 로그 설계가 중요합니다.\n\n같은 저장소의 MedNeuro 탭에서 아키텍처·ERD·시연 영상을 함께 보시면 전체 그림이 이어집니다."
+        "embedPdf": "projects/ai-portfolio/ai-welding-defect-classification.pdf",
+        "content": "【DL — AI 기반 LNG 탱크 용접 결함 자동 분류】 (발표자: 김민수, 보고서 원문은 상단 PDF)\n\n■ 배경·목표\nLNG 탱크·선박·플랜트 용접부는 안전과 직결되나, 육안 검사는 검사자 피로 누적으로 일관된 품질 확보가 어렵습니다. 본 과제는 AI 이미지 분류로 용접 결함을 자동 탐지·분류하여 객관적·신뢰성 높은 품질 검수를 목표로 합니다.\n\n■ 과제 범위\n원시 데이터 수집·데이터셋 구축, 전처리·표준화·EDA, 모델 비교·선정·학습, 평가지표 기반 성능 평가, Streamlit 프로토타입 및 웹 기반 예측 시스템 테스트까지 포함합니다.\n\n■ 데이터 (AI Hub)\n• 데이터셋명: LNG 탱크 제조 및 운영 품질 검사 데이터 (제공: 미래아이티컨소시엄, aihub.or.kr)\n• 이미지: 원본 2992×2992 px → 224×224 크롭, 촬영 대상은 LNG 탱크 외부 지지대 용접 조인트 부위\n• 어노테이션: COCO JSON(Segmentation + BBox)\n• 클래스: 용접불량(bad_weld), 블로우홀(blowhole), 용접양품(good) — 3클래스 이미지 분류\n\n■ EDA 요약\n클래스별 픽셀 밝기 분포를 보면 평균 밝기 차이는 최대 약 10 수준이나, 분포 겹침이 있어 단순 밝기만으로는 분류가 불가능함을 확인했습니다.\n\n■ 모델 비교·선정\nBasic_CNN, VGG16, ResNet50, EfficientNetV2(전이학습)를 비교했습니다. EfficientNetV2는 초기부터 높은 정확도·빠른 손실 수렴으로 전이학습 효과가 크고, 최종 검증 정확도 Basic_CNN 91.7% · VGG16 93.0% · ResNet50 96.3% · EfficientNetV2 97.5%로 EfficientNetV2가 최고 성능을 기록해 최종 모델로 선정했습니다.\n\n■ 학습·평가\nEfficientNetV2B0는 Feature Extraction 후 Epoch 20 부근에서 Fine-Tuning으로 전환하는 2단계 학습입니다. Fine-Tuning 전환 시 손실 급등·정확도 일시 저하는 동결 해제 레이어 가중치 재조정 과정에서 나타나는 정상적인 현상으로, 이후 안정화됩니다. 테스트 600장 중 594장 정분류이며, 혼동행렬·ROC(AUC)·t-SNE·Grad-CAM으로 클래스 간 혼동·판단 근거를 검증했습니다(Grad-CAM으로 결함 위치와 히트맵 일치 등 XAI 확인).\n\n■ 활용\nStreamlit으로 이미지 업로드·실시간 판독·클래스별 확률 비교 시각화 프로토타입을 구현했습니다.\n\n■ 보완·한계 (보고서 정리)\nCPU 학습 속도 한계, GPU·더 큰 모델·앙상블, 정적 이미지에서 실시간 영상으로의 확장, 세부 불량 유형 추가, 원본 대비 학습에 사용한 데이터 비율·촬영 조건 다양화 등이 향후 과제로 제시되어 있습니다.\n\n※ MedNeuro(의료 영상·3D) 프로젝트는 별도 「MedNeuro」 카드에서 확인할 수 있습니다."
       },
       {
         "id": "llm",

@@ -544,7 +544,8 @@ export function ProjectTabsView({ project }: ProjectTabsViewProps) {
           {activeTab.embedPdf ? (
             <>
               {(activeTab.id === "overview" ||
-                (project.id === "ai-portfolio" && activeTab.id === "ml")) &&
+                (project.id === "ai-portfolio" &&
+                  (activeTab.id === "ml" || activeTab.id === "dl"))) &&
                 project.tags.length > 0 && (
                 <ul
                   className="mb-3 flex flex-wrap gap-2"
