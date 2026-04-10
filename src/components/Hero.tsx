@@ -24,6 +24,10 @@ export function Hero() {
             <Sparkles className="h-3.5 w-3.5 shrink-0" aria-hidden />
             Full-stack Developer
           </p>
+          <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[13px] text-accent backdrop-blur-sm">
+            <Sparkles className="h-3.5 w-3.5 shrink-0" aria-hidden />
+            AI/ML/DL Engineer
+          </p>
 
           <h1 className="mb-10 text-balance break-keep text-[1.375rem] font-bold leading-[1.65] tracking-normal text-zinc-100 sm:text-2xl sm:leading-[1.62] lg:text-[1.65rem] lg:leading-[1.68]">
             WebSocket 기반 실시간 채팅과 Java·Python 멀티 서버 아키텍처를 설계하고
