@@ -397,6 +397,7 @@ export function ProjectTabsView({ project }: ProjectTabsViewProps) {
                   </div>
                   <div className="overflow-hidden rounded-lg border border-white/10 bg-zinc-900/50 shadow-inner">
                     <iframe
+                      key={pdfRel} 
                       title={`${project.title} — ${activeTab.label} PDF`}
                       src={publicAssetUrl(pdfRel)}
                       className="block h-[min(85dvh,920px)] w-full min-h-[min(70dvh,560px)] border-0 bg-zinc-100"
