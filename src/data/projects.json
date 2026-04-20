@@ -184,7 +184,11 @@
       "EDA",
       "Scikit-learn",
       "CNN",
-      "EfficientNetV2"
+      "EfficientNetV2",
+      "EfficientNet-B0",
+      "Gemma 4",
+      "Gradio",
+      "TTA"
     ],
     "showDemoPlaceholder": false,
     "detailTabs": [
@@ -203,7 +207,8 @@
       {
         "id": "llm",
         "label": "LLM",
-        "content": "【LLM — 법률 도메인 RAG·생성형 AI】\n\nLawPartner 프로젝트에서의 LLM·RAG 적용 요약입니다.\n\n■ 구성\nLangChain, 임베딩·RetrievalQA, LLM API(Gemini 2.5), FastAPI·Uvicorn, FAISS·Hugging Face(판례 연동)\n\n■ 흐름\n법률·판례 문서 인덱싱 → 검색 증강 → 답변 생성, React 프론트와 JWT·API로 연동\n\n■ 포인트\n도메인 특화 청킹·검색 품질·출처 표시가 서비스 신뢰도와 직결됩니다.\n\nLawPartner 프로젝트 탭의 「개요」「시스템 아키텍처」에서 동일 스택을 슬라이드로 확인할 수 있습니다."
+        "embedPdf": "projects/ai-portfolio/fdc-tactical-ai.pdf",
+        "content": "【LLM — FDC: AI 기반 사격 통제 및 전술 분석 시스템】 (발표자: 김민수, 원문은 상단 PDF)\n\n■ 프로젝트 개요\n위성 이미지에서 건물 군집 중심점(Centroid)을 딥러닝으로 자동 좌표화하고, 81mm 박격포 사격 제원을 계산한 뒤 Gemma 4 LLM이 자연어 전술 브리핑을 자동 생성하는 통합 사격 통제 시스템입니다.\n파이프라인: 위성 이미지 입력 → AI 표적 탐지(0.1초) → 사격 제원 산출 → Gemma 4 전술 리포트 생성\n\n■ 데이터 및 전처리\n• 출처: AI 허브 인공위성 영상 객체 판독 데이터셋\n• 규모: 위성 이미지 1,238세트, 어노테이션 폴리곤 163K+, 군사시설 포함 비율 6.4%\n• 타겟 설정: 개별 건물이 아닌 건물 군집 전체의 무게 중심(면적 기반)을 타겟으로 정의 → 타격 효율 극대화\n• 동적 정규화: 픽셀 좌표를 이미지 크기로 나눠 상대 비율(0~1)로 변환 → 해상도에 무관하게 일관된 좌표 해석 가능\n  (tx = pixel_x / img_w, ty = pixel_y / img_h)\n• 전처리 파이프라인: 원본 1024px → Resize 224×224 → ImageNet Normalize → 좌표 정규화\n\n■ 딥러닝 모델 (EfficientNet-B0)\n• MobileNetV3-S/L, EfficientNet-B0/B1, ResNet-50, VGG-16 비교 검토\n• 최종 선정: EfficientNet-B0 (5.3M 파라미터, 정확도 77.1%, 추론 속도 1.5ms)\n  - Compound Scaling으로 깊이·너비·해상도를 동시 최적화\n  - 야전 환경 실시간 탐지에 최적화된 경량 고성능 모델\n• 아키텍처: EfficientNet-B0 → FC Head (Linear 1280→64→2) → Sigmoid → (cx, cy) ∈ [0, 1]\n  - Sigmoid로 출력 범위 [0,1] 강제 제한 (이미지 밖 예측 원천 차단)\n• 학습: 50 에폭, Cosine LR 스케줄러, Best Val Loss 0.0326 (Epoch 4 저장)\n• TTA (Test-Time Augmentation) ×4: 원본·좌우반전·상하반전·180° 회전 평균 → 분산 억제·신뢰도 향상\n\n■ 성능 검증\n• Val MAE: 135.6 px (Y축), X MAE: 138.8 px → 실제 거리 환산 시 오차 약 20m\n• 1024 px = 실제 1km 기준: 평균 오차 20 px ≈ 20m\n• 81mm 박격포 살상 반경 34m 대비 AI 오차 ~20m → 효력사 범위 내에 수학적으로 포함\n• 수동 계산 오차(50~100m) 대비 AI 자동화가 2~5배 정밀\n\n■ LLM 연결 (Gemma 4)\n• 역할: 숫자 좌표를 지휘관이 이해 가능한 자연어 전술 브리핑으로 변환 (AI 참모 역할)\n• 로컬 전용 구동: 완전 오프라인 — 보안 환경에서 인터넷 없이 즉시 사용 가능\n• 프롬프트 설계:\n  - System: 군사 전술 분석관 페르소나 부여 → 도메인 전문 응답 유도\n  - User: 좌표(lat/lon)·거리·방위각을 f-string으로 동적 삽입, 3~5항목 요약 요청\n• 출력: 지형 위험요소·권고사항을 즉시 활용 가능한 보고서 형식으로 생성\n\n■ 프로토타입 (Gradio UI)\n• ① Leaflet 위성 지도에서 드래그로 분석 영역 선택\n• ② EfficientNet-B0 + TTA×4 → cx, cy 좌표·위경도 즉시 출력 + 81mm 사격 제원 자동 계산\n• ③ Gemma 4가 자연어 전술 브리핑 자동 생성\n\n■ 느낀 점 및 향후 계획\n• 인공위성 데이터셋 특성을 이해하지 못한 상태에서 일반 좌표 정규화를 적용해 손실이 줄지 않다가, 동적 정규화 도입 후 해결 → 도메인 이해의 중요성 체감\n• 향후: 기상 조건 반영(편각·사각 산출), K-9 자주포 등 다양한 화력 체계 확장, 드론 연동 실시간 이동 표적 추적\n\n※ LawPartner 프로젝트의 LLM·RAG 적용(LangChain, Gemini 2.5, FAISS)은 LawPartner 탭에서 확인할 수 있습니다."
       }
     ]
   },
