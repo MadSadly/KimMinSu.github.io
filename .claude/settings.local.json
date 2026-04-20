@@ -2,6 +2,9 @@
   "permissions": {
     "allow": [
       "Read(//c/Users/**)"
+    ],
+    "additionalDirectories": [
+      "C:\\Users\\human-27\\Downloads"
     ]
   }
 }
