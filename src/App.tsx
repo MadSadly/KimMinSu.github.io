@@ -37,11 +37,11 @@ const projects = [
     image: "projects/medicore/patient-detail.png", github: "https://github.com/MadSadly/MediCore",
   },
   {
-    id: "jnkc", number: "04", category: "JNKC · LOCAL LLM / RAG", title: "Manufacturing AI Agent",
-    statement: "파인튜닝을 고집하지 않고, 검증 가능한 RAG 시스템으로 전환했습니다.",
-    description: "MES Text-to-SQL 모델의 SFT·CPT 실험에서 과적합과 스키마 오적용을 확인한 뒤 검색 중심 구조로 재설계했습니다. 검색, SQL 안전성 검증, KPI 라우팅, 사실 추출과 문장 생성을 분리해 제조 특화 AI 에이전트의 정확성과 재현성을 개선했습니다.",
-    decisions: [["실험", "SFT · CPT · LoRA 비교 검증"], ["전환", "테이블 · 뷰 · 프로시저 RAG"], ["신뢰성", "SQL 검증 · 팬아웃 방어 · 회귀 평가"]],
-    tags: ["Python", "C#", "Local LLM", "RAG", "LangGraph", "pgvector"],
+    id: "jnkc", number: "04", category: "JNKC · MANUFACTURING AI", title: "제조 현장을 이해하는 AI",
+    statement: "사내 MES 데이터를 찾아 답하고, 결과를 확인할 수 있는 로컬 AI를 개발했습니다.",
+    description: "처음에는 회사 업무 지식을 모델에 직접 학습시켰지만, 실제 데이터베이스의 테이블과 항목을 혼동하는 문제가 있었습니다. 질문과 관련된 정보를 먼저 찾고 생성된 SQL을 실행 전에 검사하도록 바꿔, 잘못된 조회를 줄이고 답변의 근거를 확인할 수 있게 만들었습니다.",
+    decisions: [["처음 시도", "업무 지식을 모델에 직접 학습"], ["발견한 문제", "실제 DB 정보 혼동 · 일관되지 않은 답변"], ["개선", "관련 정보 검색 · SQL 검사 · 결과 설명"]],
+    tags: ["Python", "C#", "Local LLM", "RAG", "Text-to-SQL"],
     image: "",
   },
   {
@@ -137,8 +137,8 @@ export default function App() {
       <section className="stage" aria-live="polite">
         {page === 0 && (
           <article className="intro-page page-enter">
-            <p className="eyebrow">AI ENGINEER · SYSTEM BUILDER</p>
-            <h1><em>AI를 현장에 연결하는 엔지니어,</em><br />문제를 끝까지 구현하는 기술자 김민수입니다.</h1>
+            <p className="eyebrow">SOFTWARE DEVELOPER · RESEARCHER</p>
+            <h1><em>AI를 서비스와 제조 현장에 연결하는 개발자,</em><br />문제를 끝까지 구현하는 연구원 김민수입니다.</h1>
             <div className="intro-bottom">
               <p>서비스 개발부터 로컬 LLM·RAG 시스템까지,<br />필요한 기술을 연결해 실제로 작동하는 결과를 만듭니다.</p>
               <button className="text-link" onClick={() => move(1)}>대표 작업 보기 <ArrowRight size={18} /></button>
@@ -183,11 +183,11 @@ export default function App() {
                   <video src="videos/medneduro-demo.mp4" autoPlay muted loop playsInline controls />
                 ) : activeProject.id === "jnkc" ? (
                   <div className="research-visual" aria-label="제조 AI 에이전트 처리 흐름">
-                    <p>MANUFACTURING AI PIPELINE</p>
-                    <div><span>01</span><strong>질문 이해</strong><small>Intent · KPI routing</small></div>
-                    <div><span>02</span><strong>근거 검색</strong><small>Table · View · Procedure</small></div>
-                    <div><span>03</span><strong>SQL 검증</strong><small>Safety · Fan-out guard</small></div>
-                    <div><span>04</span><strong>결과 설명</strong><small>Facts first · LLM wording</small></div>
+                    <p>제조 AI 질문 처리 흐름</p>
+                    <div><span>01</span><strong>질문 이해</strong><small>무엇을 찾는지 분류</small></div>
+                    <div><span>02</span><strong>업무 정보 검색</strong><small>관련 DB 구조와 규칙 확인</small></div>
+                    <div><span>03</span><strong>조회문 검사</strong><small>잘못된 조건과 중복 계산 방지</small></div>
+                    <div><span>04</span><strong>답변 생성</strong><small>조회 결과를 읽기 쉽게 설명</small></div>
                   </div>
                 ) : (
                   <img src={activeProject.image} alt={`${activeProject.title} 대표 화면`} />
