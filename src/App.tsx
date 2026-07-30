@@ -16,7 +16,7 @@ const projects = [
     description: "WebSocket 기반 1:1 채팅을 중심으로 React, Spring Boot, FastAPI를 연결했습니다. 기능을 늘리는 데 그치지 않고 인증·데이터 일관성·서버 역할 분리를 함께 설계했습니다.",
     decisions: [["문제", "복잡한 절차와 높은 상담 비용"], ["판단", "메인 서버와 AI 서버의 책임 분리"], ["구현", "STOMP 실시간 채팅 · JWT · RAG"]],
     tags: ["Spring Boot", "React", "WebSocket", "FastAPI", "Oracle"],
-    image: "projects/lawpartner/architecture.png", github: "https://github.com/MadSadly/LawPartner",
+    image: "https://i.ytimg.com/vi/Gf6rH7uUiC8/maxresdefault.jpg", github: "https://github.com/MadSadly/LawPartner",
   },
   {
     id: "medneuro", number: "02", category: "MEDICAL · VISUALIZATION", title: "MedNeuro",
@@ -24,7 +24,7 @@ const projects = [
     description: "의료 영상 처리와 3D 시각화를 하나의 흐름으로 연결했습니다. Java 서버는 서비스와 데이터를, Python은 영상 처리를 맡도록 나누어 복잡도를 제어했습니다.",
     decisions: [["문제", "제한된 장소와 전용 소프트웨어"], ["판단", "처리 서버와 서비스 서버 분리"], ["구현", "NIfTI · DICOM · Three.js"]],
     tags: ["Spring Boot", "Python", "Three.js", "Medical AI"],
-    image: "projects/medneduro/overview-key-tech.png", github: "https://github.com/MadSadly/MedNeuro",
+    image: "projects/medneduro/background.png", github: "https://github.com/MadSadly/MedNeuro",
   },
   {
     id: "ai", number: "03", category: "AI · MODEL TO PRODUCT", title: "Models, made useful.",
@@ -32,7 +32,7 @@ const projects = [
     description: "심장질환 예측, 용접 결함 분류, 위성 기반 표적 분석을 수행했습니다. 비교 실험과 설명 가능성을 거쳐 사용자가 결과를 확인할 수 있는 인터페이스까지 구현했습니다.",
     decisions: [["ML", "심장질환 위험 예측과 변수 해석"], ["DL", "EfficientNetV2 기반 결함 분류"], ["LLM", "탐지 결과를 전술 브리핑으로 변환"]],
     tags: ["Python", "EfficientNetV2", "Scikit-learn", "LLM", "XAI"],
-    image: "projects/medneduro/architecture.png",
+    image: "projects/ai-portfolio/fdc-cover.png",
   },
 ] as const;
 
