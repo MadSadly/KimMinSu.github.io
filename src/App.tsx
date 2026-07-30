@@ -12,18 +12,18 @@ const pages = [
 const projects = [
   {
     id: "lawpartner", number: "01", category: "FULL-STACK · REAL-TIME", title: "LawPartner",
-    statement: "법률 서비스의 높은 진입 장벽을, 실시간 상담 경험으로 낮췄습니다.",
-    description: "WebSocket 기반 1:1 채팅을 중심으로 React, Spring Boot, FastAPI를 연결했습니다. 기능을 늘리는 데 그치지 않고 인증·데이터 일관성·서버 역할 분리를 함께 설계했습니다.",
-    decisions: [["문제", "복잡한 절차와 높은 상담 비용"], ["판단", "메인 서버와 AI 서버의 책임 분리"], ["구현", "STOMP 실시간 채팅 · JWT · RAG"]],
-    tags: ["Spring Boot", "React", "WebSocket", "FastAPI", "Oracle"],
+    statement: "서비스의 첫 화면부터 상담 이후의 경험까지 연결했습니다.",
+    description: "메인페이지와 일반 사용자 마이페이지, 1:1 채팅, 헤더 알림을 담당했습니다. 팀이 빠르게 개발을 시작할 수 있도록 초기 개발 환경을 구축하고 프로젝트 일정도 제안했습니다.",
+    decisions: [["화면", "메인페이지 · 일반 마이페이지"], ["소통", "1:1 채팅 · 헤더 알림"], ["협업", "개발 환경 구축 · 일정 제안"]],
+    tags: ["React", "Spring", "Python"],
     image: "https://i.ytimg.com/vi/Gf6rH7uUiC8/maxresdefault.jpg", github: "https://github.com/MadSadly/LawPartner",
   },
   {
     id: "medneuro", number: "02", category: "MEDICAL · VISUALIZATION", title: "MedNeuro",
-    statement: "전문가의 의료 영상을, 웹에서 탐색 가능한 경험으로 옮겼습니다.",
-    description: "의료 영상 처리와 3D 시각화를 하나의 흐름으로 연결했습니다. Java 서버는 서비스와 데이터를, Python은 영상 처리를 맡도록 나누어 복잡도를 제어했습니다.",
-    decisions: [["문제", "제한된 장소와 전용 소프트웨어"], ["판단", "처리 서버와 서비스 서버 분리"], ["구현", "NIfTI · DICOM · Three.js"]],
-    tags: ["Spring Boot", "Python", "Three.js", "Medical AI"],
+    statement: "사용자가 의료 서비스에 진입하고 이전 기록을 확인하는 흐름을 구현했습니다.",
+    description: "로그인과 회원가입, 최근 이력 조회 기능을 담당했습니다. 프로젝트 초기에 React, Spring, Python 개발 환경을 설정해 팀이 같은 기준에서 작업할 수 있도록 구성했습니다.",
+    decisions: [["인증", "로그인 · 회원가입"], ["조회", "사용자의 최근 이력"], ["협업", "개발 환경 초기 설정"]],
+    tags: ["React", "Spring", "Python"],
     image: "projects/medneduro/background.png", github: "https://github.com/MadSadly/MedNeuro",
   },
   {
@@ -156,10 +156,10 @@ export default function App() {
           <article className="about-page page-enter">
             <div><p className="eyebrow">ABOUT · KIM MIN SU</p><h2>구현하는 사람에서,<br /><em>판단하는 개발자</em>로.</h2></div>
             <div className="about-grid">
-              <div><span>CURRENT</span><p><strong>JNKC</strong><br />2026.05.11 — 현재</p></div>
-              <div><span>APPROACH</span><p>기능의 수보다 문제 해결의 근거, 안정성, 지속 가능성을 봅니다.</p></div>
-              <div><span>EXPERIENCE</span><p>실시간 채팅, 의료 영상, ML·DL·LLM 프로젝트를 완성했습니다.</p></div>
-              <div><span>FOCUS</span><p>Java · Spring 기반 백엔드와 Python AI 서비스를 연결합니다.</p></div>
+              <div><span>CURRENT</span><p><strong>JNKC · 연구원</strong><br />2026.05.11 — 현재</p></div>
+              <div><span>CURRENT WORK</span><p>로컬 AI LLM을 활용한 제조 특화 AI 에이전트를 개발합니다.</p></div>
+              <div><span>WORK STACK</span><p><strong>Python · C#</strong><br />모델과 제조 현장의 요구를 연결합니다.</p></div>
+              <div><span>PROJECTS</span><p>React · Spring · Python으로 사용자 기능과 개발 환경을 구축했습니다.</p></div>
             </div>
             <a className="contact-line" href="https://github.com/MadSadly" target="_blank" rel="noreferrer">Let&apos;s build something useful. <ArrowRight size={24} /></a>
           </article>
