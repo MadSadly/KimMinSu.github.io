@@ -114,10 +114,10 @@ export default function App() {
           <article className="about-page page-enter">
             <div><p className="eyebrow">ABOUT · KIM MIN SU</p><h2>구현하는 사람에서,<br /><em>판단하는 개발자</em>로.</h2></div>
             <div className="about-grid">
-              <div><span>FOCUS</span><p>Java · Spring 기반 백엔드와 Python AI 서비스를 연결합니다.</p></div>
+              <div><span>CURRENT</span><p><strong>JNKC</strong><br />2026.05.11 — 현재</p></div>
               <div><span>APPROACH</span><p>기능의 수보다 문제 해결의 근거, 안정성, 지속 가능성을 봅니다.</p></div>
               <div><span>EXPERIENCE</span><p>실시간 채팅, 의료 영상, ML·DL·LLM 프로젝트를 완성했습니다.</p></div>
-              <div><span>NEXT</span><p>사용자에게 도달하는 AI와 신뢰할 수 있는 서버를 만들고 싶습니다.</p></div>
+              <div><span>FOCUS</span><p>Java · Spring 기반 백엔드와 Python AI 서비스를 연결합니다.</p></div>
             </div>
             <a className="contact-line" href="https://github.com/MadSadly" target="_blank" rel="noreferrer">Let&apos;s build something useful. <ArrowRight size={24} /></a>
           </article>

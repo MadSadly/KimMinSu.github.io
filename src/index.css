@@ -51,6 +51,7 @@ em { color:var(--accent); font-family:Georgia,"Times New Roman",serif; font-weig
 .about-grid div { min-height:145px; padding:18px; border-right:1px solid var(--line); border-bottom:1px solid var(--line); }
 .about-grid span { color:var(--accent); font-size:10px; font-weight:700; letter-spacing:.12em; }
 .about-grid p { margin:25px 0 0; font-size:13px; line-height:1.65; word-break:keep-all; }
+.about-grid strong { font-size:16px; font-weight:600; letter-spacing:.02em; }
 .contact-line { display:flex; grid-column:1/-1; align-items:center; justify-content:space-between; margin-top:3vh; padding:15px 0; border-top:1px solid var(--ink); border-bottom:1px solid var(--ink); font-family:Georgia,serif; font-size:clamp(18px,2vw,30px); text-decoration:none; }
 .controls { border-top:1px solid var(--line); font-size:10px; letter-spacing:.12em; }
 .controls>div { display:flex; gap:8px; }
