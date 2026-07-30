@@ -16,7 +16,11 @@ const projects = [
     id: "lawpartner", number: "01", category: "FULL-STACK · REAL-TIME", title: "LawPartner",
     statement: "서비스의 첫 화면부터 상담 이후의 경험까지 연결했습니다.",
     description: "메인페이지와 일반 사용자 마이페이지, 1:1 채팅, 헤더 알림을 담당했습니다. 팀이 빠르게 개발을 시작할 수 있도록 초기 개발 환경을 구축하고 프로젝트 일정도 제안했습니다.",
-    decisions: [["화면", "메인페이지 · 일반 마이페이지"], ["소통", "1:1 채팅 · 헤더 알림"], ["협업", "개발 환경 구축 · 일정 제안"]],
+    decisions: [
+      ["구현 화면", "메인페이지 · 일반 사용자 마이페이지 개발"],
+      ["구현 기능", "1:1 채팅 · 헤더 알림 기능 개발"],
+      ["프로젝트 기여", "초기 개발 환경 구축 · 개발 일정 제안"],
+    ],
     tags: ["React", "Spring", "Python"],
     image: "https://i.ytimg.com/vi/Gf6rH7uUiC8/maxresdefault.jpg", github: "https://github.com/MadSadly/LawPartner",
   },

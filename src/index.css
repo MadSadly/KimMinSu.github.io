@@ -36,7 +36,7 @@ em { color:var(--accent); font-family:Georgia,"Times New Roman",serif; font-weig
 .project-copy h3 { max-width:620px; margin:0 0 2.2vh; font-size:clamp(17px,1.5vw,23px); font-weight:500; line-height:1.45; letter-spacing:-.03em; word-break:keep-all; }
 .project-description { max-width:590px; margin:0 0 2vh; }
 .project-copy dl { max-width:590px; margin:0 0 2vh; border-top:1px solid var(--line); }
-.project-copy dl div { display:grid; grid-template-columns:74px 1fr; padding:9px 0; border-bottom:1px solid var(--line); font-size:12px; }
+.project-copy dl div { display:grid; grid-template-columns:90px 1fr; padding:9px 0; border-bottom:1px solid var(--line); font-size:12px; }
 .project-copy dt { color:var(--muted); }
 .project-copy dd { margin:0; font-weight:500; }
 .tag-list { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:1.5vh; }
