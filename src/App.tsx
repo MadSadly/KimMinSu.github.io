@@ -5,7 +5,8 @@ const pages = [
   { id: "intro", label: "Index" },
   { id: "lawpartner", label: "01" },
   { id: "medneuro", label: "02" },
-  { id: "ai", label: "03" },
+  { id: "medicore", label: "03" },
+  { id: "ai", label: "04" },
   { id: "about", label: "About" },
 ] as const;
 
@@ -27,7 +28,15 @@ const projects = [
     image: "projects/medneduro/background.png", github: "https://github.com/MadSadly/MedNeuro",
   },
   {
-    id: "ai", number: "03", category: "AI · MODEL TO PRODUCT", title: "Models, made useful.",
+    id: "medicore", number: "03", category: "MEDICAL AI · DISTRIBUTED SYSTEM", title: "MediCore",
+    statement: "여러 의료 AI 모델을 하나의 진단 흐름으로 연결했습니다.",
+    description: "프로젝트 초기 환경과 분산 시스템 구조를 구축하고, 로그인·회원가입과 공통 대시보드·환자 상세 화면을 구현했습니다. 피부질환 영역에서는 EfficientNet-B4 진단 서버부터 Grad-CAM, 품질 검사, RAG·LangGraph 기반 소견 생성까지 담당했습니다.",
+    decisions: [["플랫폼", "초기 환경 · 분산 시스템 구조"], ["공통 기능", "인증 · 대시보드 · 환자 상세"], ["피부질환 AI", "분류 · 설명 · RAG 소견 생성"]],
+    tags: ["React", "Spring Boot", "FastAPI", "PyTorch", "LangGraph", "Docker"],
+    image: "projects/medicore/patient-detail.png", github: "https://github.com/MadSadly/MediCore",
+  },
+  {
+    id: "ai", number: "04", category: "AI · MODEL TO PRODUCT", title: "Models, made useful.",
     statement: "모델의 정확도보다, 결과가 실제로 쓰이는 방식까지 고민합니다.",
     description: "심장질환 예측, 용접 결함 분류, 위성 기반 표적 분석을 수행했습니다. 비교 실험과 설명 가능성을 거쳐 사용자가 결과를 확인할 수 있는 인터페이스까지 구현했습니다.",
     decisions: [["ML", "심장질환 위험 예측과 변수 해석"], ["DL", "EfficientNetV2 기반 결함 분류"], ["LLM", "탐지 결과를 전술 브리핑으로 변환"]],
@@ -58,6 +67,10 @@ const projectMedia: Record<string, MediaItem[]> = {
     { title: "시스템 아키텍처", type: "image", src: "projects/medneduro/architecture.png" },
     { title: "ERD", type: "image", src: "projects/medneduro/medneduro-erd.png" },
     { title: "프로젝트 일정", type: "image", src: "projects/medneduro/project-schedule.png" },
+  ],
+  medicore: [
+    { title: "환자 진단 이력", type: "image", src: "projects/medicore/patient-detail.png" },
+    { title: "환자 목록 대시보드", type: "image", src: "projects/medicore/patient-list.png" },
   ],
   ai: [
     { title: "ML 분석 보고서", type: "pdf", src: "projects/ai-portfolio/ai-ml-report.pdf" },
@@ -146,7 +159,20 @@ export default function App() {
               </div>
             </div>
             <div className="project-visual">
-              <div className="image-frame"><img src={activeProject.image} alt={`${activeProject.title} 구조 자료`} /></div>
+              <div className="image-frame">
+                {activeProject.id === "lawpartner" ? (
+                  <iframe
+                    src="https://www.youtube.com/embed/Gf6rH7uUiC8?autoplay=1&mute=1&loop=1&playlist=Gf6rH7uUiC8&rel=0"
+                    title="LawPartner 시연 영상"
+                    allow="autoplay; encrypted-media; picture-in-picture"
+                    allowFullScreen
+                  />
+                ) : activeProject.id === "medneuro" ? (
+                  <video src="videos/medneduro-demo.mp4" autoPlay muted loop playsInline controls />
+                ) : (
+                  <img src={activeProject.image} alt={`${activeProject.title} 대표 화면`} />
+                )}
+              </div>
               <span className="visual-caption">SELECTED WORK / 2026</span>
             </div>
           </article>

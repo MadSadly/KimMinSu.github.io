@@ -44,7 +44,7 @@ em { color:var(--accent); font-family:Georgia,"Times New Roman",serif; font-weig
 .project-actions { display:flex; gap:22px; }
 .project-visual { min-width:0; }
 .image-frame { display:flex; align-items:center; justify-content:center; height:min(57vh,590px); overflow:hidden; border:1px solid #cecdc5; background:#e9e8e2; }
-.image-frame img { width:100%; height:100%; object-fit:contain; background:#fff; }
+.image-frame img,.image-frame video,.image-frame iframe { width:100%; height:100%; border:0; object-fit:contain; background:#fff; }
 .visual-caption { display:block; margin-top:9px; color:var(--muted); font-size:9px; letter-spacing:.15em; text-align:right; }
 .about-page { display:grid; grid-template-columns:1fr 1fr; align-content:center; gap:5vw; padding:5vh 4vw; }
 .about-page h2 { margin:2vh 0 0; font-size:clamp(40px,5vw,78px); font-weight:500; line-height:1.13; letter-spacing:-.055em; }
