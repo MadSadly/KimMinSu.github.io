@@ -25,7 +25,7 @@ button:focus-visible,a:focus-visible { outline:2px solid var(--accent); outline-
 @keyframes page-in { from { opacity:0; transform:translateY(14px); } }
 .eyebrow { margin:0; color:var(--accent); font-size:11px; font-weight:700; letter-spacing:.14em; }
 .intro-page { position:relative; display:flex; flex-direction:column; justify-content:center; padding:4vh 4vw; }
-.intro-page h1 { max-width:1050px; margin:3vh 0 5vh; font-size:clamp(46px,6.1vw,94px); font-weight:500; line-height:1.1; letter-spacing:-.065em; }
+.intro-page h1 { max-width:1120px; margin:3vh 0 5vh; font-size:clamp(42px,4.4vw,72px); font-weight:500; line-height:1.15; letter-spacing:-.06em; }
 em { color:var(--accent); font-family:Georgia,"Times New Roman",serif; font-weight:400; }
 .intro-bottom { display:flex; align-items:flex-end; justify-content:space-between; width:min(780px,76%); margin-left:20%; }
 .intro-bottom p,.project-description { color:#55554f; font-size:clamp(13px,1vw,16px); line-height:1.8; word-break:keep-all; }
@@ -90,7 +90,7 @@ em { color:var(--accent); font-family:Georgia,"Times New Roman",serif; font-weig
   .site-header nav button:first-child,.site-header nav button:last-child,.header-link { display:none; }
   .stage>article { min-height:calc(100dvh - 120px); height:auto; }
   .intro-page { padding:8vh 0 5vh; }
-  .intro-page h1 { margin-top:4vh; font-size:clamp(42px,12vw,65px); }
+  .intro-page h1 { margin-top:4vh; font-size:clamp(37px,9.5vw,54px); }
   .intro-bottom { display:block; width:100%; margin:auto 0 0; }
   .intro-bottom .text-link { margin-top:25px; }
   .project-page { grid-template-columns:1fr; gap:30px; align-content:center; padding:45px 0; }

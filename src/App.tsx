@@ -138,9 +138,9 @@ export default function App() {
         {page === 0 && (
           <article className="intro-page page-enter">
             <p className="eyebrow">AI ENGINEER · SYSTEM BUILDER</p>
-            <h1>모델을 만드는 데서 멈추지 않고,<br /><em>현장에서 쓰이는 AI</em>로 연결합니다.</h1>
+            <h1><em>AI를 현장에 연결하는 엔지니어,</em><br />문제를 끝까지 구현하는 기술자 김민수입니다.</h1>
             <div className="intro-bottom">
-              <p>React·Spring·Python으로 서비스를 만들고,<br />현재는 제조 현장을 이해하는 로컬 LLM 에이전트를 개발합니다.</p>
+              <p>서비스 개발부터 로컬 LLM·RAG 시스템까지,<br />필요한 기술을 연결해 실제로 작동하는 결과를 만듭니다.</p>
               <button className="text-link" onClick={() => move(1)}>대표 작업 보기 <ArrowRight size={18} /></button>
             </div>
             <span className="hero-index">00</span>
