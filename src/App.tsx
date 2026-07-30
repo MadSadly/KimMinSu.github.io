@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { ArrowLeft, ArrowRight, ExternalLink, Github } from "lucide-react";
+import { ArrowLeft, ArrowRight, ExternalLink, FileText, Github, Play, Presentation, X } from "lucide-react";
 
 const pages = [
   { id: "intro", label: "Index" },
@@ -36,13 +36,49 @@ const projects = [
   },
 ] as const;
 
+type MediaItem = {
+  title: string;
+  type: "youtube" | "video" | "pdf" | "image";
+  src: string;
+};
+
+const projectMedia: Record<string, MediaItem[]> = {
+  lawpartner: [
+    { title: "시연 영상", type: "youtube", src: "https://www.youtube.com/embed/Gf6rH7uUiC8" },
+    { title: "프로젝트 배경", type: "image", src: "projects/lawpartner/background.png" },
+    { title: "시스템 아키텍처", type: "image", src: "projects/lawpartner/architecture.png" },
+    { title: "네트워크 구조", type: "image", src: "projects/lawpartner/network.png" },
+    { title: "ERD", type: "image", src: "projects/lawpartner/erd.png" },
+    { title: "프로젝트 일정", type: "image", src: "projects/lawpartner/schedule-part1.png" },
+  ],
+  medneuro: [
+    { title: "시연 영상", type: "video", src: "videos/medneduro-demo.mp4" },
+    { title: "프로젝트 배경", type: "image", src: "projects/medneduro/background.png" },
+    { title: "핵심 기술", type: "image", src: "projects/medneduro/overview-key-tech.png" },
+    { title: "시스템 아키텍처", type: "image", src: "projects/medneduro/architecture.png" },
+    { title: "ERD", type: "image", src: "projects/medneduro/medneduro-erd.png" },
+    { title: "프로젝트 일정", type: "image", src: "projects/medneduro/project-schedule.png" },
+  ],
+  ai: [
+    { title: "ML 분석 보고서", type: "pdf", src: "projects/ai-portfolio/ai-ml-report.pdf" },
+    { title: "용접 결함 분류", type: "pdf", src: "projects/ai-portfolio/ai-welding-defect-classification.pdf" },
+    { title: "FDC 전술 AI", type: "pdf", src: "projects/ai-portfolio/fdc-tactical-ai.pdf" },
+  ],
+};
+
 export default function App() {
   const [page, setPage] = useState(0);
+  const [media, setMedia] = useState<MediaItem | null>(null);
   const touchStart = useRef<number | null>(null);
   const move = (direction: number) => setPage((current) => Math.min(pages.length - 1, Math.max(0, current + direction)));
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setMedia(null);
+        return;
+      }
+      if (media) return;
       if (event.key === "ArrowRight" || event.key === "ArrowDown") setPage((p) => Math.min(pages.length - 1, p + 1));
       if (event.key === "ArrowLeft" || event.key === "ArrowUp") setPage((p) => Math.max(0, p - 1));
       if (event.key === "Home") setPage(0);
@@ -50,7 +86,7 @@ export default function App() {
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, []);
+  }, [media]);
 
   const activeProject = projects.find((project) => project.id === pages[page].id);
 
@@ -99,9 +135,15 @@ export default function App() {
                 {activeProject.decisions.map(([term, description]) => <div key={term}><dt>{term}</dt><dd>{description}</dd></div>)}
               </dl>
               <div className="tag-list">{activeProject.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
-              {"github" in activeProject && (
-                <a className="text-link" href={activeProject.github} target="_blank" rel="noreferrer"><Github size={17} /> 저장소 보기</a>
-              )}
+              <div className="project-actions">
+                {"github" in activeProject && (
+                  <a className="text-link" href={activeProject.github} target="_blank" rel="noreferrer"><Github size={17} /> 저장소</a>
+                )}
+                <button className="text-link" onClick={() => setMedia(projectMedia[activeProject.id][0])}>
+                  {projectMedia[activeProject.id][0].type === "pdf" ? <FileText size={17} /> : <Play size={17} />}
+                  자료 보기
+                </button>
+              </div>
             </div>
             <div className="project-visual">
               <div className="image-frame"><img src={activeProject.image} alt={`${activeProject.title} 구조 자료`} /></div>
@@ -132,6 +174,36 @@ export default function App() {
         </div>
         <span className="hint">ARROW KEYS / SWIPE</span>
       </footer>
+
+      {media && (
+        <div className="viewer-backdrop" role="presentation" onMouseDown={(event) => {
+          if (event.target === event.currentTarget) setMedia(null);
+        }}>
+          <section className="media-viewer" role="dialog" aria-modal="true" aria-label={`${media.title} 자료 뷰어`}>
+            <header>
+              <div>
+                <span>PROJECT ARCHIVE</span>
+                <h2>{media.title}</h2>
+              </div>
+              <button onClick={() => setMedia(null)} aria-label="자료 뷰어 닫기"><X /></button>
+            </header>
+            <div className="viewer-body">
+              {media.type === "youtube" && <iframe src={media.src} title={media.title} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />}
+              {media.type === "video" && <video src={media.src} controls playsInline />}
+              {media.type === "pdf" && <iframe src={`${media.src}#view=FitH`} title={media.title} />}
+              {media.type === "image" && <img src={media.src} alt={media.title} />}
+            </div>
+            <nav className="archive-list" aria-label="프로젝트 자료 선택">
+              {projectMedia[activeProject?.id ?? "ai"].map((item) => (
+                <button key={item.title} className={item.src === media.src ? "active" : ""} onClick={() => setMedia(item)}>
+                  {item.type === "video" || item.type === "youtube" ? <Play size={13} /> : item.type === "pdf" ? <FileText size={13} /> : <Presentation size={13} />}
+                  {item.title}
+                </button>
+              ))}
+            </nav>
+          </section>
+        </div>
+      )}
     </main>
   );
 }
