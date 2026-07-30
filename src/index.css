@@ -41,8 +41,11 @@ em { color:var(--accent); font-family:Georgia,"Times New Roman",serif; font-weig
 .project-copy dd { margin:0; font-weight:500; }
 .tag-list { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:1.5vh; }
 .tag-list span { padding:5px 9px; border:1px solid var(--line); border-radius:999px; color:#55554f; font-size:10px; }
-.project-actions { display:flex; gap:22px; }
+.project-actions { display:flex; flex-wrap:wrap; gap:10px 22px; }
 .project-visual { min-width:0; }
+.ai-track-switcher { display:flex; gap:7px; margin-bottom:10px; }
+.ai-track-switcher button { padding:7px 11px; border:1px solid var(--line); border-radius:999px; background:transparent; color:var(--muted); font-size:10px; cursor:pointer; transition:150ms ease; }
+.ai-track-switcher button.active { border-color:var(--accent); background:var(--accent); color:#fff; }
 .image-frame { display:flex; align-items:center; justify-content:center; height:min(57vh,590px); overflow:hidden; border:1px solid #cecdc5; background:#e9e8e2; }
 .image-frame img,.image-frame video,.image-frame iframe { width:100%; height:100%; border:0; object-fit:contain; background:#fff; }
 .research-visual { display:grid; width:100%; height:100%; align-content:center; gap:0; padding:8%; background:#111a19; color:#f4f3ee; }

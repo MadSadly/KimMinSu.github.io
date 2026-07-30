@@ -56,7 +56,7 @@ const projects = [
 
 type MediaItem = {
   title: string;
-  type: "youtube" | "video" | "pdf" | "image";
+  type: "youtube" | "video" | "pdf" | "image" | "page";
   src: string;
 };
 
@@ -64,9 +64,8 @@ const projectMedia: Record<string, MediaItem[]> = {
   lawpartner: [
     { title: "시연 영상", type: "youtube", src: "https://www.youtube.com/embed/Gf6rH7uUiC8" },
     { title: "프로젝트 배경", type: "image", src: "projects/lawpartner/background.png" },
-    { title: "시스템 아키텍처", type: "image", src: "projects/lawpartner/architecture.png" },
-    { title: "네트워크 구조", type: "image", src: "projects/lawpartner/network.png" },
-    { title: "ERD", type: "image", src: "projects/lawpartner/erd.png" },
+    { title: "네트워크·시스템 구성", type: "image", src: "projects/lawpartner/architecture.png" },
+    { title: "상세 ERD", type: "page", src: "projects/lawpartner/lawpartner-erd.html" },
     { title: "프로젝트 일정", type: "image", src: "projects/lawpartner/schedule-part1.png" },
   ],
   medneuro: [
@@ -83,6 +82,9 @@ const projectMedia: Record<string, MediaItem[]> = {
     { title: "환자 진단 이력", type: "image", src: "projects/medicore/patient-detail.png" },
     { title: "환자 목록 대시보드", type: "image", src: "projects/medicore/patient-list.png" },
   ],
+  jnkc: [
+    { title: "제조 AI 연구 자료", type: "pdf", src: "projects/jnkc/JNKC_Manufacturing_AI_Case_Study.pdf" },
+  ],
   ai: [
     { title: "ML 분석 보고서", type: "pdf", src: "projects/ai-portfolio/ai-ml-report.pdf" },
     { title: "용접 결함 분류", type: "pdf", src: "projects/ai-portfolio/ai-welding-defect-classification.pdf" },
@@ -92,6 +94,7 @@ const projectMedia: Record<string, MediaItem[]> = {
 export default function App() {
   const [page, setPage] = useState(0);
   const [media, setMedia] = useState<MediaItem | null>(null);
+  const [aiTrack, setAiTrack] = useState<"ml" | "dl">("ml");
   const touchStart = useRef<number | null>(null);
   const move = (direction: number) => setPage((current) => Math.min(pages.length - 1, Math.max(0, current + direction)));
 
@@ -162,15 +165,46 @@ export default function App() {
                 {"github" in activeProject && (
                   <a className="text-link" href={activeProject.github} target="_blank" rel="noreferrer"><Github size={17} /> 저장소</a>
                 )}
-                {projectMedia[activeProject.id]?.length > 0 && (
+                {activeProject.id !== "ai" && projectMedia[activeProject.id]?.length > 0 && (
                   <button className="text-link" onClick={() => setMedia(projectMedia[activeProject.id][0])}>
                     {projectMedia[activeProject.id][0].type === "pdf" ? <FileText size={17} /> : <Play size={17} />}
                     자료 보기
                   </button>
                 )}
+                {activeProject.id === "jnkc" && (
+                  <a className="text-link" href="projects/jnkc/JNKC_Manufacturing_AI_Case_Study.pptx" download>
+                    <Presentation size={17} /> PPTX 받기
+                  </a>
+                )}
+                {activeProject.id === "ai" && (
+                  <>
+                    <button className="text-link" onClick={() => {
+                      setAiTrack("ml");
+                      setMedia(projectMedia.ai[0]);
+                    }}>
+                      <FileText size={17} /> ML 자료 보기
+                    </button>
+                    <button className="text-link" onClick={() => {
+                      setAiTrack("dl");
+                      setMedia(projectMedia.ai[1]);
+                    }}>
+                      <FileText size={17} /> DL 자료 보기
+                    </button>
+                  </>
+                )}
               </div>
             </div>
             <div className="project-visual">
+              {activeProject.id === "ai" && (
+                <div className="ai-track-switcher" aria-label="AI 프로젝트 선택">
+                  <button className={aiTrack === "ml" ? "active" : ""} onClick={() => setAiTrack("ml")}>
+                    ML · 심장질환
+                  </button>
+                  <button className={aiTrack === "dl" ? "active" : ""} onClick={() => setAiTrack("dl")}>
+                    DL · 용접 결함
+                  </button>
+                </div>
+              )}
               <div className="image-frame">
                 {activeProject.id === "lawpartner" ? (
                   <iframe
@@ -189,6 +223,11 @@ export default function App() {
                     <div><span>03</span><strong>조회문 검사</strong><small>잘못된 조건과 중복 계산 방지</small></div>
                     <div><span>04</span><strong>답변 생성</strong><small>조회 결과를 읽기 쉽게 설명</small></div>
                   </div>
+                ) : activeProject.id === "ai" ? (
+                  <img
+                    src={aiTrack === "ml" ? "projects/ai-portfolio/ai-ml-cover.png" : "projects/ai-portfolio/ai-welding-cover.png"}
+                    alt={aiTrack === "ml" ? "ML 심장질환 분석 보고서 첫 화면" : "DL 용접 결함 분류 발표자료 첫 화면"}
+                  />
                 ) : (
                   <img src={activeProject.image} alt={`${activeProject.title} 대표 화면`} />
                 )}
@@ -238,6 +277,7 @@ export default function App() {
               {media.type === "video" && <video src={media.src} controls playsInline />}
               {media.type === "pdf" && <iframe src={`${media.src}#view=FitH`} title={media.title} />}
               {media.type === "image" && <img src={media.src} alt={media.title} />}
+              {media.type === "page" && <iframe src={media.src} title={media.title} />}
             </div>
             <nav className="archive-list" aria-label="프로젝트 자료 선택">
               {projectMedia[activeProject?.id ?? "ai"].map((item) => (
