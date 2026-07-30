@@ -25,15 +25,15 @@ button:focus-visible,a:focus-visible { outline:2px solid var(--accent); outline-
 @keyframes page-in { from { opacity:0; transform:translateY(14px); } }
 .eyebrow { margin:0; color:var(--accent); font-size:11px; font-weight:700; letter-spacing:.14em; }
 .intro-page { position:relative; display:flex; flex-direction:column; justify-content:center; padding:4vh 4vw; }
-.intro-page h1 { max-width:1120px; margin:3vh 0 5vh; font-size:clamp(42px,4.4vw,72px); font-weight:500; line-height:1.15; letter-spacing:-.06em; }
+.intro-page h1 { max-width:1080px; margin:3vh 0 5vh; font-size:clamp(34px,3.6vw,58px); font-weight:500; line-height:1.2; letter-spacing:-.055em; }
 em { color:var(--accent); font-family:Georgia,"Times New Roman",serif; font-weight:400; }
 .intro-bottom { display:flex; align-items:flex-end; justify-content:space-between; width:min(780px,76%); margin-left:20%; }
 .intro-bottom p,.project-description { color:#55554f; font-size:clamp(13px,1vw,16px); line-height:1.8; word-break:keep-all; }
 .text-link { display:inline-flex; align-items:center; gap:9px; width:max-content; padding:8px 0 5px; border:0; border-bottom:1px solid var(--ink); background:transparent; font-size:13px; text-decoration:none; cursor:pointer; }
 .hero-index { position:absolute; right:1vw; bottom:0; color:#deddd6; font-family:Georgia,serif; font-size:clamp(90px,15vw,230px); line-height:.76; z-index:-1; }
 .project-page { display:grid; grid-template-columns:minmax(0,.92fr) minmax(380px,1.08fr); gap:6vw; align-items:center; padding:3vh 3vw; }
-.project-copy h2 { margin:1.2vh 0; font-size:clamp(42px,5vw,76px); font-weight:500; line-height:1; letter-spacing:-.055em; }
-.project-copy h3 { max-width:620px; margin:0 0 2.2vh; font-size:clamp(18px,1.8vw,27px); font-weight:500; line-height:1.42; letter-spacing:-.035em; word-break:keep-all; }
+.project-copy h2 { margin:1.2vh 0; font-size:clamp(36px,4vw,60px); font-weight:500; line-height:1.05; letter-spacing:-.05em; }
+.project-copy h3 { max-width:620px; margin:0 0 2.2vh; font-size:clamp(17px,1.5vw,23px); font-weight:500; line-height:1.45; letter-spacing:-.03em; word-break:keep-all; }
 .project-description { max-width:590px; margin:0 0 2vh; }
 .project-copy dl { max-width:590px; margin:0 0 2vh; border-top:1px solid var(--line); }
 .project-copy dl div { display:grid; grid-template-columns:74px 1fr; padding:9px 0; border-bottom:1px solid var(--line); font-size:12px; }
@@ -54,7 +54,7 @@ em { color:var(--accent); font-family:Georgia,"Times New Roman",serif; font-weig
 .research-visual small { color:#9ca7a4; font-size:10px; letter-spacing:.04em; }
 .visual-caption { display:block; margin-top:9px; color:var(--muted); font-size:9px; letter-spacing:.15em; text-align:right; }
 .about-page { display:grid; grid-template-columns:1fr 1fr; align-content:center; gap:5vw; padding:5vh 4vw; }
-.about-page h2 { margin:2vh 0 0; font-size:clamp(40px,5vw,78px); font-weight:500; line-height:1.13; letter-spacing:-.055em; }
+.about-page h2 { margin:2vh 0 0; font-size:clamp(34px,4vw,60px); font-weight:500; line-height:1.17; letter-spacing:-.05em; }
 .about-grid { display:grid; grid-template-columns:1fr 1fr; align-self:center; border-top:1px solid var(--ink); }
 .about-grid div { min-height:145px; padding:18px; border-right:1px solid var(--line); border-bottom:1px solid var(--line); }
 .about-grid span { color:var(--accent); font-size:10px; font-weight:700; letter-spacing:.12em; }
@@ -90,11 +90,11 @@ em { color:var(--accent); font-family:Georgia,"Times New Roman",serif; font-weig
   .site-header nav button:first-child,.site-header nav button:last-child,.header-link { display:none; }
   .stage>article { min-height:calc(100dvh - 120px); height:auto; }
   .intro-page { padding:8vh 0 5vh; }
-  .intro-page h1 { margin-top:4vh; font-size:clamp(37px,9.5vw,54px); }
+  .intro-page h1 { margin-top:4vh; font-size:clamp(30px,7.8vw,42px); }
   .intro-bottom { display:block; width:100%; margin:auto 0 0; }
   .intro-bottom .text-link { margin-top:25px; }
   .project-page { grid-template-columns:1fr; gap:30px; align-content:center; padding:45px 0; }
-  .project-copy h2 { font-size:49px; }
+  .project-copy h2 { font-size:40px; }
   .project-visual { order:-1; }
   .image-frame { height:27vh; min-height:210px; }
   .viewer-backdrop { padding:0; }
