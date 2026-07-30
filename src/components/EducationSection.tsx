@@ -59,7 +59,6 @@ const educationCurriculumTracks: { title: string; topics: string[] }[] = [
     topics: [
       "심장 질환 예측 모델",
       "용접 불량 여부 모델",
-      "위성 좌표 기반 박격포 사격 제원 분석관 서비스",
     ],
   }
 ];

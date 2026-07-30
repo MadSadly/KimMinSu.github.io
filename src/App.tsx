@@ -6,7 +6,8 @@ const pages = [
   { id: "lawpartner", label: "01" },
   { id: "medneuro", label: "02" },
   { id: "medicore", label: "03" },
-  { id: "ai", label: "04" },
+  { id: "jnkc", label: "04" },
+  { id: "ai", label: "05" },
   { id: "about", label: "About" },
 ] as const;
 
@@ -29,19 +30,27 @@ const projects = [
   },
   {
     id: "medicore", number: "03", category: "MEDICAL AI · DISTRIBUTED SYSTEM", title: "MediCore",
-    statement: "여러 의료 AI 모델을 하나의 진단 흐름으로 연결했습니다.",
-    description: "프로젝트 초기 환경과 분산 시스템 구조를 구축하고, 로그인·회원가입과 공통 대시보드·환자 상세 화면을 구현했습니다. 피부질환 영역에서는 EfficientNet-B4 진단 서버부터 Grad-CAM, 품질 검사, RAG·LangGraph 기반 소견 생성까지 담당했습니다.",
+    statement: "질환별로 흩어진 AI를 하나의 진단 보조 경험으로 연결했습니다.",
+    description: "PL로서 프로젝트 초기 환경과 분산 시스템 구조를 구축하고, 로그인·회원가입과 공통 대시보드·환자 상세 화면을 구현했습니다. 피부질환 영역에서는 EfficientNet-B4 진단 서버부터 Grad-CAM, 품질 검사, RAG·LangGraph 기반 소견 생성까지 담당했습니다.",
     decisions: [["플랫폼", "초기 환경 · 분산 시스템 구조"], ["공통 기능", "인증 · 대시보드 · 환자 상세"], ["피부질환 AI", "분류 · 설명 · RAG 소견 생성"]],
     tags: ["React", "Spring Boot", "FastAPI", "PyTorch", "LangGraph", "Docker"],
     image: "projects/medicore/patient-detail.png", github: "https://github.com/MadSadly/MediCore",
   },
   {
-    id: "ai", number: "04", category: "AI · MODEL TO PRODUCT", title: "Models, made useful.",
+    id: "jnkc", number: "04", category: "JNKC · LOCAL LLM / RAG", title: "Manufacturing AI Agent",
+    statement: "파인튜닝을 고집하지 않고, 검증 가능한 RAG 시스템으로 전환했습니다.",
+    description: "MES Text-to-SQL 모델의 SFT·CPT 실험에서 과적합과 스키마 오적용을 확인한 뒤 검색 중심 구조로 재설계했습니다. 검색, SQL 안전성 검증, KPI 라우팅, 사실 추출과 문장 생성을 분리해 제조 특화 AI 에이전트의 정확성과 재현성을 개선했습니다.",
+    decisions: [["실험", "SFT · CPT · LoRA 비교 검증"], ["전환", "테이블 · 뷰 · 프로시저 RAG"], ["신뢰성", "SQL 검증 · 팬아웃 방어 · 회귀 평가"]],
+    tags: ["Python", "C#", "Local LLM", "RAG", "LangGraph", "pgvector"],
+    image: "",
+  },
+  {
+    id: "ai", number: "05", category: "ML · DEEP LEARNING", title: "Models, made useful.",
     statement: "모델의 정확도보다, 결과가 실제로 쓰이는 방식까지 고민합니다.",
-    description: "심장질환 예측, 용접 결함 분류, 위성 기반 표적 분석을 수행했습니다. 비교 실험과 설명 가능성을 거쳐 사용자가 결과를 확인할 수 있는 인터페이스까지 구현했습니다.",
-    decisions: [["ML", "심장질환 위험 예측과 변수 해석"], ["DL", "EfficientNetV2 기반 결함 분류"], ["LLM", "탐지 결과를 전술 브리핑으로 변환"]],
-    tags: ["Python", "EfficientNetV2", "Scikit-learn", "LLM", "XAI"],
-    image: "projects/ai-portfolio/fdc-cover.png",
+    description: "심장질환 위험 예측과 LNG 탱크 용접 결함 분류를 수행했습니다. 여러 모델을 비교하고 설명 가능성을 검토한 뒤, 사용자가 결과를 확인할 수 있는 인터페이스까지 구현했습니다.",
+    decisions: [["ML", "심장질환 위험 예측과 변수 해석"], ["DL", "EfficientNetV2 기반 용접 결함 분류"], ["검증", "모델 비교 · XAI · 사용자 화면"]],
+    tags: ["Python", "EfficientNetV2", "Scikit-learn", "XAI"],
+    image: "projects/ai-portfolio/ai-welding-cover.png",
   },
 ] as const;
 
@@ -69,13 +78,14 @@ const projectMedia: Record<string, MediaItem[]> = {
     { title: "프로젝트 일정", type: "image", src: "projects/medneduro/project-schedule.png" },
   ],
   medicore: [
+    { title: "MediCore 발표자료", type: "pdf", src: "projects/medicore/Medi_Core_v1.5.pdf" },
+    { title: "발표자료 표지", type: "image", src: "projects/medicore/presentation-cover.png" },
     { title: "환자 진단 이력", type: "image", src: "projects/medicore/patient-detail.png" },
     { title: "환자 목록 대시보드", type: "image", src: "projects/medicore/patient-list.png" },
   ],
   ai: [
     { title: "ML 분석 보고서", type: "pdf", src: "projects/ai-portfolio/ai-ml-report.pdf" },
     { title: "용접 결함 분류", type: "pdf", src: "projects/ai-portfolio/ai-welding-defect-classification.pdf" },
-    { title: "FDC 전술 AI", type: "pdf", src: "projects/ai-portfolio/fdc-tactical-ai.pdf" },
   ],
 };
 
@@ -127,10 +137,10 @@ export default function App() {
       <section className="stage" aria-live="polite">
         {page === 0 && (
           <article className="intro-page page-enter">
-            <p className="eyebrow">BACKEND ENGINEER · AI EXPLORER</p>
-            <h1>복잡한 요구사항을<br /><em>운영 가능한 시스템</em>으로 만듭니다.</h1>
+            <p className="eyebrow">AI ENGINEER · SYSTEM BUILDER</p>
+            <h1>모델을 만드는 데서 멈추지 않고,<br /><em>현장에서 쓰이는 AI</em>로 연결합니다.</h1>
             <div className="intro-bottom">
-              <p>실시간 통신부터 AI 모델 연동까지.<br />기술을 선택하는 이유와 서비스가 지속되는 방식을 고민합니다.</p>
+              <p>React·Spring·Python으로 서비스를 만들고,<br />현재는 제조 현장을 이해하는 로컬 LLM 에이전트를 개발합니다.</p>
               <button className="text-link" onClick={() => move(1)}>대표 작업 보기 <ArrowRight size={18} /></button>
             </div>
             <span className="hero-index">00</span>
@@ -152,10 +162,12 @@ export default function App() {
                 {"github" in activeProject && (
                   <a className="text-link" href={activeProject.github} target="_blank" rel="noreferrer"><Github size={17} /> 저장소</a>
                 )}
-                <button className="text-link" onClick={() => setMedia(projectMedia[activeProject.id][0])}>
-                  {projectMedia[activeProject.id][0].type === "pdf" ? <FileText size={17} /> : <Play size={17} />}
-                  자료 보기
-                </button>
+                {projectMedia[activeProject.id]?.length > 0 && (
+                  <button className="text-link" onClick={() => setMedia(projectMedia[activeProject.id][0])}>
+                    {projectMedia[activeProject.id][0].type === "pdf" ? <FileText size={17} /> : <Play size={17} />}
+                    자료 보기
+                  </button>
+                )}
               </div>
             </div>
             <div className="project-visual">
@@ -169,6 +181,14 @@ export default function App() {
                   />
                 ) : activeProject.id === "medneuro" ? (
                   <video src="videos/medneduro-demo.mp4" autoPlay muted loop playsInline controls />
+                ) : activeProject.id === "jnkc" ? (
+                  <div className="research-visual" aria-label="제조 AI 에이전트 처리 흐름">
+                    <p>MANUFACTURING AI PIPELINE</p>
+                    <div><span>01</span><strong>질문 이해</strong><small>Intent · KPI routing</small></div>
+                    <div><span>02</span><strong>근거 검색</strong><small>Table · View · Procedure</small></div>
+                    <div><span>03</span><strong>SQL 검증</strong><small>Safety · Fan-out guard</small></div>
+                    <div><span>04</span><strong>결과 설명</strong><small>Facts first · LLM wording</small></div>
+                  </div>
                 ) : (
                   <img src={activeProject.image} alt={`${activeProject.title} 대표 화면`} />
                 )}
