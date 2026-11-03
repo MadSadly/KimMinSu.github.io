@@ -49,15 +49,16 @@ const projects = [
     image: "projects/medicore/patient-detail.png", github: "https://github.com/MadSadly/MediCore",
   },
   {
-    id: "jnkc", number: "04", category: "JNKC · MANUFACTURING AI", title: "제조 현장을 이해하는 AI",
-    statement: "사내 MES 데이터를 찾아 답하고, 결과를 확인할 수 있는 로컬 AI를 개발했습니다.",
-    description: "처음에는 회사 업무 지식을 모델에 직접 학습시켰지만, 실제 데이터베이스의 테이블과 항목을 혼동하는 문제가 있었습니다. 질문과 관련된 정보를 먼저 찾고 생성된 SQL을 실행 전에 검사하도록 바꿔, 잘못된 조회를 줄이고 답변의 근거를 확인할 수 있게 만들었습니다.",
+    id: "jnkc", number: "04", category: "MANUFACTURING AI · LOCAL LLM", title: "제조 현장을 이해하는 AI",
+    statement: "제조 데이터를 찾아 답하고, 결과를 확인할 수 있는 로컬 AI를 연구했습니다.",
+    description: "여러 오픈 LLM을 비교하고 업무 지식을 파인튜닝으로 학습시켰지만, 변하는 데이터베이스의 사실까지 안정적으로 기억시키기는 어려웠습니다. 실험 결과를 분석해 파인튜닝은 표현에, 검색은 사실 확인에 쓰도록 역할을 나누고, 생성된 SQL을 실행 전에 검사해 답변의 근거를 확인할 수 있게 만들었습니다.",
     decisions: [
-      ["연구 업무", "SFT · CPT · LoRA 방식 비교 실험"],
-      ["문제 분석", "실제 DB 정보 혼동 · 일관되지 않은 답변 확인"],
+      ["모델 비교", "오픈 LLM 후보 비교 · 파인튜닝 파이프라인 구성"],
+      ["파인튜닝", "SFT · CPT · LoRA 비교 · 과적합과 망각 원인 분석"],
       ["구조 개선", "RAG 검색 · SQL 검사 · 결과 설명 단계 분리"],
+      ["평가", "동일 문항 A/B 비교로 개선 방향 결정"],
     ],
-    tags: ["Python", "C#", "Local LLM", "RAG", "Text-to-SQL"],
+    tags: ["Python", "C#", "Local LLM", "Fine-Tuning", "RAG", "Text-to-SQL"],
     image: "",
   },
   {
@@ -109,12 +110,13 @@ const projectJapanese: Record<string, ProjectCopy> = {
     ],
   },
   jnkc: {
-    statement: "社内MESデータを検索し、根拠を確認できるローカルAIを開発しました。",
-    description: "当初は業務知識をモデルに直接学習させましたが、実際のデータベースのテーブルや項目を混同する問題がありました。関連情報を先に検索し、生成したSQLを実行前に検証する構成へ変更して、誤った照会を減らし、回答の根拠を確認できるようにしました。",
+    statement: "製造データを検索して回答し、結果を確認できるローカルAIを研究しました。",
+    description: "複数のオープンLLMを比較しましたが、ファインチューニングだけでは、変化するDBの事実を、安定して記憶させることは困難でした。分析の結果、学習は表現に、検索は事実確認に役割を分け、生成したSQLを実行前に検証する構成にしました。",
     decisions: [
-      ["研究内容", "SFT・CPT・LoRA方式の比較実験"],
-      ["問題分析", "実DB情報の混同・不安定な回答を確認"],
+      ["モデル比較", "オープンLLM候補の比較・学習基盤の構築"],
+      ["モデル調整", "SFT・CPT・LoRAの比較・過学習の原因分析"],
       ["構成改善", "RAG検索・SQL検証・結果説明を段階ごとに分離"],
+      ["評価", "同一設問のA/B比較で改善方針を決定"],
     ],
   },
   ai: {
