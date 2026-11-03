@@ -235,6 +235,7 @@ const projectMedia: Record<string, MediaItem[]> = {
     { title: "환자 목록 대시보드", titleJa: "患者一覧ダッシュボード", type: "image", src: "projects/medicore/patient-list.png" },
   ],
   jnkc: [
+    { title: "가상 데이터 시연 영상", titleJa: "仮想データのデモ動画", type: "video", src: "videos/manufacturing-ai-demo.mp4" },
     { title: "제조 AI 연구 자료", titleJa: "製造AI研究資料", type: "pdf", src: "projects/jnkc/JNKC_Manufacturing_AI_Case_Study.pdf" },
   ],
   ai: [
