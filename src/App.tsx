@@ -236,7 +236,7 @@ const projectMedia: Record<string, MediaItem[]> = {
   ],
   jnkc: [
     { title: "가상 데이터 시연 영상", titleJa: "仮想データのデモ動画", type: "video", src: "videos/manufacturing-ai-demo.mp4" },
-    { title: "제조 AI 연구 자료", titleJa: "製造AI研究資料", type: "pdf", src: "projects/jnkc/JNKC_Manufacturing_AI_Case_Study.pdf" },
+    { title: "제조 AI 연구 기록", titleJa: "製造AI研究記録", type: "pdf", src: "projects/jnkc/Manufacturing_AI_Research_Record.pdf" },
   ],
   ai: [
     { title: "ML 분석 보고서", titleJa: "ML分析レポート", type: "pdf", src: "projects/ai-portfolio/ai-ml-report.pdf" },
@@ -341,7 +341,7 @@ export default function App() {
                   </button>
                 )}
                 {activeProject.id === "jnkc" && (
-                  <a className="text-link" href="projects/jnkc/JNKC_Manufacturing_AI_Case_Study.pptx" download>
+                  <a className="text-link" href="projects/jnkc/Manufacturing_AI_Research_Record.pptx" download>
                     <Presentation size={17} /> {copy.downloadPptx}
                   </a>
                 )}
